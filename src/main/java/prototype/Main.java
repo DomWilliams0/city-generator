@@ -1,6 +1,7 @@
 package prototype;
 
 
+import prototype.generator.Density;
 import prototype.generator.Generator;
 import prototype.graph.Graph;
 
@@ -50,6 +51,7 @@ public class Main
 		{
 			for (int i = 0; i < count; i++)
 			{
+				Density.reseed();
 				Graph graph = new Graph(width, height);
 				Generator g = new Generator(graph);
 

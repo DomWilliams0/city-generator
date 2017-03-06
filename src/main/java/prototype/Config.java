@@ -7,8 +7,11 @@ public class Config
 	public static double MERGE_THRESHOLD = 15;
 	public static double ROAD_LENGTH = 20;
 
-	public static int VERTEX_RENDER_RADIUS = 5;
+	public static double NOISE_SCALE = 100;
+	public static final double ANGLE_VARIATION = 13;
 
+	public static boolean RENDER_NOISE = false;
+	public static int VERTEX_RENDER_RADIUS = 5;
 	public static Color VERTEX_RENDER_COLOUR = Color.RED;
 	public static Color ROAD_MAIN_RENDER_COLOUR = Color.BLACK;
 	public static Color ROAD_MINOR_RENDER_COLOUR = Color.BLUE;

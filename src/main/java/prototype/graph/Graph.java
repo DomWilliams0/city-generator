@@ -2,6 +2,7 @@ package prototype.graph;
 
 import prototype.Config;
 import prototype.RoadType;
+import prototype.generator.Density;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -101,6 +102,20 @@ public class Graph
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 
+		// noise
+		if (Config.RENDER_NOISE)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					double noise = Density.getValue(x, y);
+					int pixel = (int) (noise * 255);
+					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
+				}
+			}
+		}
+
 		// vertices
 		g.setColor(Config.VERTEX_RENDER_COLOUR);
 		for (Vertex v : vertices.values())
@@ -140,13 +155,16 @@ public class Graph
 			}
 		}
 
-		try
+		synchronized (Graph.class)
 		{
-			ImageIO.write(image, "png", outFile);
-			System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), outFile.getAbsolutePath());
-		} catch (IOException e)
-		{
-			e.printStackTrace();
+			try
+			{
+				ImageIO.write(image, "png", outFile);
+				System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), outFile.getAbsolutePath());
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
