@@ -12,12 +12,14 @@ public class ProposedVertex
 	private RoadType type;
 
 	private Vertex srcVertex;
+	private boolean proposeMore;
 
 	public ProposedVertex(double x, double y, Vertex src, RoadType type)
 	{
 		this.pos = new Point2D.Double(x, y);
 		this.type = type;
 		this.srcVertex = src;
+		this.proposeMore = true;
 	}
 
 
@@ -56,6 +58,16 @@ public class ProposedVertex
 		return srcVertex;
 	}
 
+	public boolean shouldProposeMore()
+	{
+		return proposeMore;
+	}
+
+	public void setShouldProposeMore(boolean proposeMore)
+	{
+		this.proposeMore = proposeMore;
+	}
+
 	public Vector2D getDirection()
 	{
 		Vector2D src = new Vector2D(srcVertex.getPoint().x, srcVertex.getPoint().y);
@@ -65,12 +77,11 @@ public class ProposedVertex
 	}
 
 	/**
-	 * @return Degrees
+	 * @return Radians
 	 */
 	public double getDirectionAngle()
 	{
-		double radians = Math.atan2(pos.y - srcVertex.getPoint().y, pos.x - srcVertex.getPoint().x);
-		return Math.toDegrees(radians);
+		return Math.atan2(pos.y - srcVertex.getPoint().y, pos.x - srcVertex.getPoint().x);
 	}
 
 	@Override

@@ -8,11 +8,15 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		Graph graph = new Graph(1200, 600);
-		Generator g = new Generator(graph);
+		// TODO multiple threads
+		for (int i = 0; i < 10; i++)
+		{
+			Graph graph = new Graph(1200, 600);
+			Generator g = new Generator(graph);
 
-		g.generate();
+			g.generate();
 
-		graph.export();
+			graph.export();
+		}
 	}
 }

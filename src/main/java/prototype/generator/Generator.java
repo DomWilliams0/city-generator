@@ -5,6 +5,7 @@ import prototype.generator.rules.GridRule;
 import prototype.graph.Graph;
 import prototype.graph.Vertex;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,12 @@ public class Generator
 				Vertex newlyAdded = graph.addVertex(vertex.getX(), vertex.getY(), vertex.getType());
 				graph.addEdge(newlyAdded, vertex.getSourceVertex());
 
-				proposed.clear();
-				produceWithGlobalGoals(vertex, newlyAdded, proposed);
-
-				frontier.addAll(proposed);
+				if (vertex.shouldProposeMore())
+				{
+					proposed.clear();
+					produceWithGlobalGoals(vertex, newlyAdded, proposed);
+					frontier.addAll(proposed);
+				}
 			}
 
 
@@ -72,6 +75,14 @@ public class Generator
 		if (graph.hasVertex(vertex.getX(), vertex.getY()))
 			return false;
 
+		// merge with nearby
+		Point2D toMerge = findClosestVertex(vertex.getPosition(), 15,
+			vertex.getPosition(), vertex.getSourceVertex().getPoint());
+		if (toMerge != null)
+		{
+			vertex.setPosition(toMerge.getX(), toMerge.getY());
+			vertex.setShouldProposeMore(false);
+		}
 
 		return true;
 	}
@@ -79,11 +90,33 @@ public class Generator
 	private void initFrontier()
 	{
 		// add single reference vertex
-		Vertex ref = graph.addVertex(50, 80, RoadType.MAIN);
+		Vertex ref = graph.addVertex(graph.getWidth()/2, graph.getHeight()/2, RoadType.MAIN);
 
-		ProposedVertex a = new ProposedVertex(100, 100, ref, RoadType.MAIN);
+		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + 20, ref, RoadType.MAIN);
 
 		frontier.add(a);
+	}
+
+	private Point2D findClosestVertex(Point2D pos, double threshold, Point2D.Double moi, Point2D.Double moiSrc)
+	{
+		Point2D closest = null;
+		double closestDistance = Double.MAX_VALUE;
+		double thresholdSq = threshold * threshold;
+
+		for (Vertex vertex : graph.getVertices())
+		{
+			if (vertex.getPoint().equals(moi) || vertex.getPoint().equals(moiSrc))
+				continue;
+
+			double d = vertex.getPoint().distanceSq(pos);
+			if (d <= thresholdSq && d < closestDistance)
+			{
+				closestDistance = d;
+				closest = vertex.getPoint();
+			}
+		}
+
+		return closest;
 	}
 
 }

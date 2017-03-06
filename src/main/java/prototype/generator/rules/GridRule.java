@@ -4,65 +4,35 @@ import prototype.generator.ProposedVertex;
 import prototype.generator.Utils;
 import prototype.graph.Vertex;
 
-import java.awt.geom.Point2D;
 import java.util.List;
 
 public class GridRule
 {
 	public void suggestVertices(ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
 	{
-		// TODO only grid generation, but the angle depends on the noise ?
-		double minAngle = -90;
-		double maxAngle = 90;
-		double angleIncrement = 90;
+		// TODO only grid generation, but the angle offset depends on the noise ?
+		double angleOffset = 0.1 + Utils.RANDOM.nextFloat() / 4;
 
-		double suggestRoadLength = 20;
-		double tooCloseThreshold = 100;
+		double suggestRoadLength = 20; // TODO constants
 
-		// maximum 3 times
+		double currentAngle = src.getDirectionAngle();
+		double[] gridAngles = {-Math.PI / 2, 0, Math.PI};
+
+		// left, forward, right
 		for (int i = 0; i < 3; i++)
 		{
 			// generate angle
-			double proposedAngle = proposeAngle(src.getDirectionAngle(), minAngle, maxAngle, angleIncrement);
+			double proposedAngle = gridAngles[i] + currentAngle + angleOffset;
 			double proposedX = src.getX() + (Math.cos(proposedAngle) * suggestRoadLength);
 			double proposedY = src.getY() + (Math.sin(proposedAngle) * suggestRoadLength);
 
-			// ensure not too close to other proposed
-			if (notTooCloseToOthers(proposedX, proposedY, proposed, tooCloseThreshold))
+			double chance = 0.7; // TODO depend on noise
+
+			if (Utils.RANDOM.nextFloat() < chance)
 			{
 				proposed.add(new ProposedVertex(proposedX, proposedY, srcNewlyAdded, src.getType()));
 			}
 
 		}
-	}
-
-	private boolean notTooCloseToOthers(double proposedX, double proposedY,
-	                                    List<ProposedVertex> proposed, double tooCloseThreshold)
-	{
-		for (ProposedVertex other : proposed)
-		{
-			double dsqr = Point2D.distanceSq(
-				proposedX, proposedY,
-				other.getX(), other.getY()
-			);
-
-			if (dsqr <= tooCloseThreshold * tooCloseThreshold)
-				return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * All in degrees
-	 * @return Radians
-	 */
-	private double proposeAngle(double offset, double minAngle, double maxAngle, double angleIncrement)
-	{
-		double r = Utils.RANDOM.nextInt((int) (maxAngle - minAngle)) + minAngle;
-		double rounded = ((int) Math.round(Math.abs(r) / angleIncrement)) * angleIncrement;
-		rounded *= Math.signum(r);
-
-		return Math.toRadians(offset + rounded);
 	}
 }

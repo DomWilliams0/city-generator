@@ -163,4 +163,14 @@ public class Graph
 
 		render(out);
 	}
+
+	public int getWidth()
+	{
+		return width;
+	}
+
+	public int getHeight()
+	{
+		return height;
+	}
 }
