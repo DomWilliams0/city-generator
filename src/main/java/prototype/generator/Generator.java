@@ -1,5 +1,6 @@
 package prototype.generator;
 
+import prototype.Config;
 import prototype.RoadType;
 import prototype.generator.rules.GridRule;
 import prototype.graph.Graph;
@@ -76,7 +77,7 @@ public class Generator
 			return false;
 
 		// merge with nearby
-		Point2D toMerge = findClosestVertex(vertex.getPosition(), 15,
+		Point2D toMerge = findClosestVertex(vertex.getPosition(), Config.MERGE_THRESHOLD,
 			vertex.getPosition(), vertex.getSourceVertex().getPoint());
 		if (toMerge != null)
 		{
@@ -92,7 +93,7 @@ public class Generator
 		// add single reference vertex
 		Vertex ref = graph.addVertex(graph.getWidth()/2, graph.getHeight()/2, RoadType.MAIN);
 
-		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + 20, ref, RoadType.MAIN);
+		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + Config.ROAD_LENGTH, ref, RoadType.MAIN);
 
 		frontier.add(a);
 	}

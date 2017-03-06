@@ -1,5 +1,6 @@
 package prototype.generator.rules;
 
+import prototype.Config;
 import prototype.generator.ProposedVertex;
 import prototype.generator.Utils;
 import prototype.graph.Vertex;
@@ -13,8 +14,6 @@ public class GridRule
 		// TODO only grid generation, but the angle offset depends on the noise ?
 		double angleOffset = 0.1 + Utils.RANDOM.nextFloat() / 4;
 
-		double suggestRoadLength = 20; // TODO constants
-
 		double currentAngle = src.getDirectionAngle();
 		double[] gridAngles = {-Math.PI / 2, 0, Math.PI};
 
@@ -23,8 +22,8 @@ public class GridRule
 		{
 			// generate angle
 			double proposedAngle = gridAngles[i] + currentAngle + angleOffset;
-			double proposedX = src.getX() + (Math.cos(proposedAngle) * suggestRoadLength);
-			double proposedY = src.getY() + (Math.sin(proposedAngle) * suggestRoadLength);
+			double proposedX = src.getX() + (Math.cos(proposedAngle) * Config.ROAD_LENGTH);
+			double proposedY = src.getY() + (Math.sin(proposedAngle) * Config.ROAD_LENGTH);
 
 			double chance = 0.7; // TODO depend on noise
 

@@ -1,5 +1,6 @@
 package prototype.graph;
 
+import prototype.Config;
 import prototype.RoadType;
 
 import javax.imageio.ImageIO;
@@ -101,15 +102,14 @@ public class Graph
 		g.fillRect(0, 0, width, height);
 
 		// vertices
-		g.setColor(Color.RED);
-		int rad = 5;
+		g.setColor(Config.VERTEX_RENDER_COLOUR);
 		for (Vertex v : vertices.values())
 		{
-			drawOval(g, v.getPoint(), rad, true);
+			drawOval(g, v.getPoint(), Config.VERTEX_RENDER_RADIUS, true);
 		}
 
-		Stroke MAIN_STROKE = new BasicStroke(3);
-		Stroke MINOR_STROKE = new BasicStroke(1);
+		Stroke mainStroke = new BasicStroke(Config.ROAD_MAIN_RENDER_THICKNESS);
+		Stroke minorStroke = new BasicStroke(Config.ROAD_MINOR_RENDER_THICKNESS);
 
 		// edges
 		for (Map.Entry<Vertex, Set<Vertex>> e : edges.entrySet())
@@ -119,12 +119,12 @@ public class Graph
 			{
 				if (v.isMain() && neighbour.isMain())
 				{
-					g.setColor(Color.BLACK);
-					g.setStroke(MAIN_STROKE);
+					g.setColor(Config.ROAD_MAIN_RENDER_COLOUR);
+					g.setStroke(mainStroke);
 				} else
 				{
-					g.setColor(Color.BLUE);
-					g.setStroke(MINOR_STROKE);
+					g.setColor(Config.ROAD_MINOR_RENDER_COLOUR);
+					g.setStroke(minorStroke);
 				}
 
 				Point2D.Double vp = v.getPoint();
