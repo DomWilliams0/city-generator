@@ -1,7 +1,7 @@
 package prototype.generator;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import prototype.RoadType;
+import prototype.generator.rules.GridRule;
 import prototype.graph.Graph;
 import prototype.graph.Vertex;
 
@@ -15,10 +15,13 @@ public class Generator
 	private Graph graph;
 	private Queue<ProposedVertex> frontier;
 
+	private GridRule rule;
+
 	public Generator(Graph graph)
 	{
 		this.graph = graph;
 		this.frontier = new ArrayDeque<>();
+		this.rule = new GridRule();
 	}
 
 	public void generate()
@@ -33,6 +36,10 @@ public class Generator
 
 			if (acceptLocalConstraints(vertex))
 			{
+				// may have been tweaked out of range
+				if (!graph.isInRange(vertex.getX(), vertex.getY()))
+					continue;
+
 				Vertex newlyAdded = graph.addVertex(vertex.getX(), vertex.getY(), vertex.getType());
 				graph.addEdge(newlyAdded, vertex.getSourceVertex());
 
@@ -49,18 +56,7 @@ public class Generator
 
 	private void produceWithGlobalGoals(ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
 	{
-		Vector2D direction = src.getDirection();
-
-		// add neighbour following direction
-		direction = direction.scalarMultiply(20);
-
-		ProposedVertex suggestion = new ProposedVertex(
-			src.getX() + direction.getX(),
-			src.getY() + direction.getY(),
-			srcNewlyAdded,
-			src.getType());
-
-		proposed.add(suggestion);
+		rule.suggestVertices(src, srcNewlyAdded, proposed);
 	}
 
 	/**
@@ -76,7 +72,6 @@ public class Generator
 		if (graph.hasVertex(vertex.getX(), vertex.getY()))
 			return false;
 
-		// can get direction from vertex.getSourceVertex()
 
 		return true;
 	}

@@ -47,4 +47,13 @@ public class Vertex
 	{
 		return pos.hashCode();
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Vertex{" +
+			"pos=" + pos +
+			", type=" + type +
+			'}';
+	}
 }

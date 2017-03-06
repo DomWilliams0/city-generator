@@ -31,7 +31,7 @@ public class Graph
 	{
 		// bad coords
 		if (!isInRange(x, y))
-			return null;
+			throw new IllegalArgumentException("Vertex out of range (" + x + ", " + y + ")");
 
 		// fetch existing
 		Point2D.Double point = new Point2D.Double(x, y);

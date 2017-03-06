@@ -63,4 +63,23 @@ public class ProposedVertex
 
 		return dst.subtract(src).normalize();
 	}
+
+	/**
+	 * @return Degrees
+	 */
+	public double getDirectionAngle()
+	{
+		double radians = Math.atan2(pos.y - srcVertex.getPoint().y, pos.x - srcVertex.getPoint().x);
+		return Math.toDegrees(radians);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "ProposedVertex{" +
+			"pos=" + pos +
+			", type=" + type +
+			", srcVertex=" + srcVertex +
+			'}';
+	}
 }
