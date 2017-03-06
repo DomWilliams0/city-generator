@@ -8,12 +8,11 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Graph
 {
-	private static int NEXT_RENDER = 1;
-
 	private Map<Point2D, Vertex> vertices;
 	private Map<Vertex, Set<Vertex>> edges;
 
@@ -144,16 +143,16 @@ public class Graph
 		try
 		{
 			ImageIO.write(image, "png", outFile);
-			System.out.printf("Exported to '%s'\n", outFile.getAbsolutePath());
+			System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), outFile.getAbsolutePath());
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	public void export()
+	public void export(String dir, String nameFormat, int index)
 	{
-		File out = new File("/tmp/road-renders/render-" + NEXT_RENDER++ + ".png");
+		File out = Paths.get(dir, String.format(nameFormat, index)).toFile();
 
 		File parent = out.getParentFile();
 		if (!parent.exists())
