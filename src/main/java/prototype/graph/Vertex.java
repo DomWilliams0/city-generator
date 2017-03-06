@@ -1,6 +1,5 @@
 package prototype.graph;
 
-import org.apache.commons.math3.geometry.spherical.twod.S2Point;
 import prototype.RoadType;
 
 import java.awt.geom.Point2D;
@@ -31,16 +30,6 @@ public class Vertex
 	public Point2D.Double getPoint()
 	{
 		return pos;
-	}
-
-	public int getIntX()
-	{
-		return (int) Math.round(pos.getX());
-	}
-
-	public int getIntY()
-	{
-		return (int) Math.round(pos.getY());
 	}
 
 	@Override

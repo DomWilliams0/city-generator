@@ -41,13 +41,18 @@ public class Graph
 		{
 			v = new Vertex(x, y, type);
 			vertices.put(point, v);
-		}
-		else if (v.getType() != type)
+		} else if (v.getType() != type)
 		{
 			System.err.println("Mismatching type of vertex: " + v);
 		}
 
 		return v;
+	}
+
+
+	public boolean hasVertex(double x, double y)
+	{
+		return vertices.containsKey(new Point2D.Double(x, y));
 	}
 
 	public Collection<Vertex> getVertices()
@@ -73,9 +78,18 @@ public class Graph
 			vertices.remove(b);
 
 	}
-	private boolean isInRange(double x, double y)
+
+	public boolean isInRange(double x, double y)
 	{
 		return x >= 0 && y >= 0 && x < width && y < height;
+	}
+
+	private void drawOval(Graphics2D g, Point2D.Double point, int radius, boolean fill)
+	{
+		if (fill)
+			g.fillOval((int) point.getX() - radius / 2, (int) (point.getY() - radius / 2), radius, radius);
+		else
+			g.drawOval((int) point.getX() - radius / 2, (int) (point.getY() - radius / 2), radius, radius);
 	}
 
 	private void render(File outFile)
@@ -87,7 +101,15 @@ public class Graph
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 
-		Stroke MAIN_STROKE = new BasicStroke(1);
+		// vertices
+		g.setColor(Color.RED);
+		int rad = 5;
+		for (Vertex v : vertices.values())
+		{
+			drawOval(g, v.getPoint(), rad, true);
+		}
+
+		Stroke MAIN_STROKE = new BasicStroke(3);
 		Stroke MINOR_STROKE = new BasicStroke(1);
 
 		// edges
@@ -106,22 +128,23 @@ public class Graph
 					g.setStroke(MINOR_STROKE);
 				}
 
-				g.drawLine(v.getIntX(), v.getIntY(), neighbour.getIntX(), neighbour.getIntY());
-			}
-		}
+				Point2D.Double vp = v.getPoint();
+				Point2D.Double np = neighbour.getPoint();
+				g.drawLine((int) vp.x, (int) vp.y, (int) np.x, (int) np.y);
 
-		// vertices
-		g.setColor(Color.RED);
-		g.setStroke(MINOR_STROKE);
-		int rad = 5;
-		for (Vertex v : vertices.values())
-		{
-			g.fillOval(v.getIntX() - rad / 2, v.getIntY() - rad / 2, rad, rad);
+				// green start, pink end
+				g.setColor(Color.GREEN);
+				drawOval(g, vp, 2, false);
+				g.setColor(Color.PINK);
+				drawOval(g, np, 2, false);
+
+			}
 		}
 
 		try
 		{
 			ImageIO.write(image, "png", outFile);
+			System.out.printf("Exported to '%s'\n", outFile.getAbsolutePath());
 		} catch (IOException e)
 		{
 			e.printStackTrace();
