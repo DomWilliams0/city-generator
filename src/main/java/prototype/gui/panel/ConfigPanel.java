@@ -1,4 +1,4 @@
-package prototype.gui;
+package prototype.gui.panel;
 
 import javax.swing.*;
 

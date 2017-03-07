@@ -1,4 +1,6 @@
-package prototype.gui;
+package prototype.gui.panel;
+
+import prototype.gui.GeneratorModel;
 
 import javax.swing.*;
 import java.awt.*;

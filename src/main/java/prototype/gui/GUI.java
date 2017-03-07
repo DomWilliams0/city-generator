@@ -1,5 +1,7 @@
 package prototype.gui;
 
+import prototype.gui.panel.ContentPanel;
+
 import javax.swing.*;
 
 public class GUI
