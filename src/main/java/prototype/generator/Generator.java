@@ -95,7 +95,7 @@ public class Generator
 	private void initFrontier()
 	{
 		// add single reference vertex
-		Vertex ref = graph.addVertex(graph.getWidth()/2, graph.getHeight()/2, RoadType.MAIN);
+		Vertex ref = graph.addVertex(graph.getWidth() / 2, graph.getHeight() / 2, RoadType.MAIN);
 
 		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + Config.ROAD_LENGTH, ref, RoadType.MAIN);
 

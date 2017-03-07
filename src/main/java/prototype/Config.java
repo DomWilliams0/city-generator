@@ -4,11 +4,12 @@ import java.awt.*;
 
 public class Config
 {
-	public static double MERGE_THRESHOLD = 15;
+	public static double MERGE_THRESHOLD = 18;
 	public static double ROAD_LENGTH = 20;
 
 	public static double NOISE_SCALE = 100;
 	public static double ANGLE_VARIATION = 7;
+	public static double ROAD_CHANCE = 0.8;
 	public static int MINIMUM_VERTICES = 100;
 
 	public static boolean RENDER_NOISE = false;

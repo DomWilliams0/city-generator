@@ -22,17 +22,15 @@ public class GridRule
 		// left, forward, right
 		for (int i = 0; i < 3; i++)
 		{
-			// generate angle
-			double proposedAngle = gridAngles[i] + currentAngle + angleOffset;
-			double proposedX = src.getX() + (Math.cos(proposedAngle) * Config.ROAD_LENGTH);
-			double proposedY = src.getY() + (Math.sin(proposedAngle) * Config.ROAD_LENGTH);
-
-
-			// TODO hmm
-			if (density * Utils.RANDOM.nextFloat() < 0.5)
+			if (Utils.RANDOM.nextFloat() < Config.ROAD_CHANCE)
 			{
+				double proposedAngle = gridAngles[i] + currentAngle + angleOffset;
+				double proposedX = src.getX() + (Math.cos(proposedAngle) * Config.ROAD_LENGTH);
+				double proposedY = src.getY() + (Math.sin(proposedAngle) * Config.ROAD_LENGTH);
+
 				proposed.add(new ProposedVertex(proposedX, proposedY, srcNewlyAdded, src.getType()));
 			}
+
 
 		}
 	}
