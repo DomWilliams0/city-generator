@@ -93,7 +93,7 @@ public class Graph
 			g.drawOval((int) point.getX() - radius / 2, (int) (point.getY() - radius / 2), radius, radius);
 	}
 
-	private void render(File outFile)
+	public BufferedImage render()
 	{
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
@@ -155,17 +155,7 @@ public class Graph
 			}
 		}
 
-		synchronized (Graph.class)
-		{
-			try
-			{
-				ImageIO.write(image, "png", outFile);
-				System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), outFile.getAbsolutePath());
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
+		return image;
 	}
 
 	public void export(String dir, String nameFormat, int index)
@@ -178,7 +168,18 @@ public class Graph
 
 		out.delete();
 
-		render(out);
+		BufferedImage image = render();
+		synchronized (Graph.class)
+		{
+			try
+			{
+				ImageIO.write(image, "png", out);
+				System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), out.getAbsolutePath());
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public int getWidth()
