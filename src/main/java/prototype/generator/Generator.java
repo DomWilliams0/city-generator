@@ -28,7 +28,7 @@ public class Generator
 
 	public void generate()
 	{
-		while (graph.getVertices().size() < Config.MINIMUM_VERTICES)
+		while (graph.getVertices().size() < Config.getInt(Config.Key.MINIMUM_VERTICES))
 		{
 			graph.getVertices().clear();
 			graph.getEdges().clear();
@@ -81,7 +81,7 @@ public class Generator
 			return false;
 
 		// merge with nearby
-		Point2D toMerge = findClosestVertex(vertex.getPosition(), Config.MERGE_THRESHOLD,
+		Point2D toMerge = findClosestVertex(vertex.getPosition(), Config.getDouble(Config.Key.MERGE_THRESHOLD),
 			vertex.getPosition(), vertex.getSourceVertex().getPoint());
 		if (toMerge != null)
 		{
@@ -97,7 +97,8 @@ public class Generator
 		// add single reference vertex
 		Vertex ref = graph.addVertex(graph.getWidth() / 2, graph.getHeight() / 2, RoadType.MAIN);
 
-		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + Config.ROAD_LENGTH, ref, RoadType.MAIN);
+		double length = Config.getDouble(Config.Key.ROAD_LENGTH);
+		ProposedVertex a = new ProposedVertex(ref.getPoint().getX(), ref.getPoint().getY() + length, ref, RoadType.MAIN);
 
 		frontier.add(a);
 	}

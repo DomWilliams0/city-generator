@@ -14,7 +14,7 @@ public class GridRule
 	{
 		double density = Density.getValue(src.getX(), src.getY());
 
-		double angleOffset = density / Config.ANGLE_VARIATION;
+		double angleOffset = density / Config.getDouble(Config.Key.ANGLE_VARIATION);
 
 		double currentAngle = src.getDirectionAngle();
 		double[] gridAngles = {-Math.PI / 2, 0, Math.PI};
@@ -22,11 +22,11 @@ public class GridRule
 		// left, forward, right
 		for (int i = 0; i < 3; i++)
 		{
-			if (Utils.RANDOM.nextFloat() < Config.ROAD_CHANCE)
+			if (Utils.RANDOM.nextFloat() < Config.getDouble(Config.Key.ROAD_CHANCE))
 			{
 				double proposedAngle = gridAngles[i] + currentAngle + angleOffset;
-				double proposedX = src.getX() + (Math.cos(proposedAngle) * Config.ROAD_LENGTH);
-				double proposedY = src.getY() + (Math.sin(proposedAngle) * Config.ROAD_LENGTH);
+				double proposedX = src.getX() + (Math.cos(proposedAngle) * Config.getDouble(Config.Key.ROAD_LENGTH));
+				double proposedY = src.getY() + (Math.sin(proposedAngle) * Config.getDouble(Config.Key.ROAD_LENGTH));
 
 				proposed.add(new ProposedVertex(proposedX, proposedY, srcNewlyAdded, src.getType()));
 			}

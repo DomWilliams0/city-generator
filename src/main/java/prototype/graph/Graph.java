@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static prototype.Config.Key.ROAD_MAIN_RENDER_THICKNESS;
+import static prototype.Config.Key.ROAD_MINOR_RENDER_THICKNESS;
+import static prototype.Config.Key.VERTEX_RENDER_COLOUR;
+
 public class Graph
 {
 	private Map<Point2D, Vertex> vertices;
@@ -99,7 +103,7 @@ public class Graph
 		Graphics2D g = image.createGraphics();
 
 		// noise
-		if (Config.RENDER_NOISE)
+		if (Config.getBoolean(Config.Key.RENDER_NOISE))
 		{
 			for (int x = 0; x < width; x++)
 			{
@@ -113,14 +117,14 @@ public class Graph
 		}
 
 		// vertices
-		g.setColor(Config.VERTEX_RENDER_COLOUR);
+		g.setColor(Config.getColour(VERTEX_RENDER_COLOUR));
 		for (Vertex v : vertices.values())
 		{
-			drawOval(g, v.getPoint(), Config.VERTEX_RENDER_RADIUS, true);
+			drawOval(g, v.getPoint(), Config.getInt(Config.Key.VERTEX_RENDER_RADIUS), true);
 		}
 
-		Stroke mainStroke = new BasicStroke(Config.ROAD_MAIN_RENDER_THICKNESS);
-		Stroke minorStroke = new BasicStroke(Config.ROAD_MINOR_RENDER_THICKNESS);
+		Stroke mainStroke = new BasicStroke(Config.getInt(Config.Key.ROAD_MAIN_RENDER_THICKNESS));
+		Stroke minorStroke = new BasicStroke(Config.getInt(Config.Key.ROAD_MINOR_RENDER_THICKNESS));
 
 		// edges
 		for (Map.Entry<Vertex, Set<Vertex>> e : edges.entrySet())
@@ -130,11 +134,11 @@ public class Graph
 			{
 				if (v.isMain() && neighbour.isMain())
 				{
-					g.setColor(Config.ROAD_MAIN_RENDER_COLOUR);
+					g.setColor(Config.getColour(Config.Key.ROAD_MAIN_RENDER_COLOUR));
 					g.setStroke(mainStroke);
 				} else
 				{
-					g.setColor(Config.ROAD_MINOR_RENDER_COLOUR);
+					g.setColor(Config.getColour(Config.Key.ROAD_MINOR_RENDER_COLOUR));
 					g.setStroke(minorStroke);
 				}
 

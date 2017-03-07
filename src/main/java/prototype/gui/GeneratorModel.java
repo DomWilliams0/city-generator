@@ -16,7 +16,10 @@ public class GeneratorModel extends Observable
 
 	public void generate()
 	{
-		generator = new Generator(new Graph(Config.WIDTH, Config.HEIGHT));
+		generator = new Generator(new Graph(
+			Config.getInt(Config.Key.WORLD_WIDTH),
+			Config.getInt(Config.Key.WORLD_WIDTH))
+		);
 		generator.generate();
 
 		setChanged();

@@ -32,7 +32,8 @@ public class Density
 		double old_max = 1.0;
 		double new_min = 0.0;
 		double new_max = 1.0;
-		double old_value = NOISE.eval(x / Config.NOISE_SCALE, y / Config.NOISE_SCALE);
+		double scale = Config.getDouble(Config.Key.NOISE_SCALE);
+		double old_value = NOISE.eval(x / scale, y / scale);
 
 		double new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min;
 		return Math.min(new_max, Math.max(new_min, new_value));

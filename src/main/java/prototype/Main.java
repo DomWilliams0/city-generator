@@ -13,9 +13,11 @@ public class Main
 		int TASKS_PER_THREAD = 3;
 
 		Thread[] threads = new Thread[THREAD_COUNT];
+		int width = Config.getInt(Config.Key.WORLD_WIDTH);
+		int height = Config.getInt(Config.Key.WORLD_HEIGHT);
 		for (int i = 0; i < threads.length; i++)
 		{
-			threads[i] = new Thread(new GeneratorRunnable(600, 600, TASKS_PER_THREAD, TASKS_PER_THREAD*i));
+			threads[i] = new Thread(new GeneratorRunnable(width, height, TASKS_PER_THREAD, TASKS_PER_THREAD*i));
 			threads[i].start();
 		}
 		for (Thread thread : threads)
