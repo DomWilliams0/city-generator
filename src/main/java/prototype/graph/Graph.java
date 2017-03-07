@@ -98,10 +98,6 @@ public class Graph
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 
-		// background
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, width, height);
-
 		// noise
 		if (Config.RENDER_NOISE)
 		{
