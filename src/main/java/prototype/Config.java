@@ -4,6 +4,9 @@ import java.awt.*;
 
 public class Config
 {
+	public static int WIDTH = 400;
+	public static int HEIGHT = 400;
+
 	public static double MERGE_THRESHOLD = 18;
 	public static double ROAD_LENGTH = 20;
 

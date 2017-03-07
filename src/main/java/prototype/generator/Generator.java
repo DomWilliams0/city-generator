@@ -124,4 +124,8 @@ public class Generator
 		return closest;
 	}
 
+	public Graph getGraph()
+	{
+		return graph;
+	}
 }
