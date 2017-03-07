@@ -8,7 +8,8 @@ public class Config
 	public static double ROAD_LENGTH = 20;
 
 	public static double NOISE_SCALE = 100;
-	public static final double ANGLE_VARIATION = 13;
+	public static double ANGLE_VARIATION = 7;
+	public static int MINIMUM_VERTICES = 100;
 
 	public static boolean RENDER_NOISE = false;
 	public static int VERTEX_RENDER_RADIUS = 5;

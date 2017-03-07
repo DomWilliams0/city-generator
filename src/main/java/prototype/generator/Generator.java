@@ -28,32 +28,36 @@ public class Generator
 
 	public void generate()
 	{
-		initFrontier();
-
-		List<ProposedVertex> proposed = new ArrayList<>();
-
-		while (!frontier.isEmpty())
+		while (graph.getVertices().size() < Config.MINIMUM_VERTICES)
 		{
-			ProposedVertex vertex = frontier.poll();
+			graph.getVertices().clear();
+			graph.getEdges().clear();
 
-			if (acceptLocalConstraints(vertex))
+			initFrontier();
+
+			List<ProposedVertex> proposed = new ArrayList<>();
+
+			while (!frontier.isEmpty())
 			{
-				// may have been tweaked out of range
-				if (!graph.isInRange(vertex.getX(), vertex.getY()))
-					continue;
+				ProposedVertex vertex = frontier.poll();
 
-				Vertex newlyAdded = graph.addVertex(vertex.getX(), vertex.getY(), vertex.getType());
-				graph.addEdge(newlyAdded, vertex.getSourceVertex());
-
-				if (vertex.shouldProposeMore())
+				if (acceptLocalConstraints(vertex))
 				{
-					proposed.clear();
-					produceWithGlobalGoals(vertex, newlyAdded, proposed);
-					frontier.addAll(proposed);
+					// may have been tweaked out of range
+					if (!graph.isInRange(vertex.getX(), vertex.getY()))
+						continue;
+
+					Vertex newlyAdded = graph.addVertex(vertex.getX(), vertex.getY(), vertex.getType());
+					graph.addEdge(newlyAdded, vertex.getSourceVertex());
+
+					if (vertex.shouldProposeMore())
+					{
+						proposed.clear();
+						produceWithGlobalGoals(vertex, newlyAdded, proposed);
+						frontier.addAll(proposed);
+					}
 				}
 			}
-
-
 		}
 
 	}
