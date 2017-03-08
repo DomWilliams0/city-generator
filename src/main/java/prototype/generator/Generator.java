@@ -28,7 +28,8 @@ public class Generator
 
 	public void generate()
 	{
-		while (graph.getVertices().size() < Config.getInt(Config.Key.MINIMUM_VERTICES))
+		int maxTries = 10;
+		while (maxTries-- > 0 && graph.getVertices().size() < Config.getInt(Config.Key.MINIMUM_VERTICES))
 		{
 			graph.getVertices().clear();
 			graph.getEdges().clear();
@@ -59,6 +60,9 @@ public class Generator
 				}
 			}
 		}
+
+		if (maxTries < 0)
+			System.err.println("Total failure");
 
 	}
 
