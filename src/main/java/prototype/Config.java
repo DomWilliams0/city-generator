@@ -1,5 +1,8 @@
 package prototype;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.awt.*;
 import java.util.EnumMap;
 
@@ -7,8 +10,7 @@ public class Config
 {
 	private static final Config INSTANCE = new Config();
 
-
-	private enum KeyType
+	public enum KeyType
 	{
 		INTEGER,
 		DOUBLE,
@@ -18,8 +20,8 @@ public class Config
 
 	public enum Key
 	{
-		WORLD_WIDTH(KeyType.INTEGER),
-		WORLD_HEIGHT(KeyType.INTEGER),
+		WORLD_WIDTH(KeyType.INTEGER, "Width"),
+		WORLD_HEIGHT(KeyType.INTEGER, "Height"),
 
 		MERGE_THRESHOLD(KeyType.DOUBLE),
 		ROAD_LENGTH(KeyType.DOUBLE),
@@ -29,18 +31,40 @@ public class Config
 		MINIMUM_VERTICES(KeyType.INTEGER),
 
 		RENDER_NOISE(KeyType.BOOLEAN),
-		VERTEX_RENDER_RADIUS(KeyType.INTEGER),
-		VERTEX_RENDER_COLOUR(KeyType.COLOUR),
-		ROAD_MAIN_RENDER_COLOUR(KeyType.COLOUR),
-		ROAD_MINOR_RENDER_COLOUR(KeyType.COLOUR),
-		ROAD_MAIN_RENDER_THICKNESS(KeyType.INTEGER),
-		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER);
+		VERTEX_RENDER_RADIUS(KeyType.INTEGER, "Vertex Radius"),
+		VERTEX_RENDER_COLOUR(KeyType.COLOUR, "Vertex Colour"),
+		ROAD_MAIN_RENDER_COLOUR(KeyType.COLOUR, "Main Road Colour"),
+		ROAD_MINOR_RENDER_COLOUR(KeyType.COLOUR, "Minor Road Colour"),
+		ROAD_MAIN_RENDER_THICKNESS(KeyType.INTEGER, "Main Road Thickness"),
+		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER, "Minor Road Thickness");
 
 		private final KeyType type;
+		private final String name;
 
 		Key(KeyType type)
 		{
+			this(type, null);
+		}
+
+		Key(KeyType type, String name)
+		{
 			this.type = type;
+
+			if (name == null)
+				name = WordUtils.capitalizeFully(name().replace('_', ' '));
+
+			this.name = name;
+		}
+
+		public KeyType getType()
+		{
+			return type;
+		}
+
+		@Override
+		public String toString()
+		{
+			return name;
 		}
 	}
 
@@ -99,6 +123,11 @@ public class Config
 			throw new IllegalArgumentException(String.format("Invalid key '%s'", key));
 
 		return val;
+	}
+
+	public static void set(Key key, Object value)
+	{
+		INSTANCE.configMap.put(key, value);
 	}
 
 }
