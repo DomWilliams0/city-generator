@@ -1,7 +1,7 @@
-package prototype.gui.panel;
+package ms.domwillia.city.gui.panel;
 
-import prototype.Config;
-import prototype.gui.GeneratorModel;
+import ms.domwillia.city.Config;
+import ms.domwillia.city.gui.GeneratorModel;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;

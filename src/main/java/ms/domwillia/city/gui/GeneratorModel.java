@@ -1,8 +1,8 @@
-package prototype.gui;
+package ms.domwillia.city.gui;
 
-import prototype.Config;
-import prototype.generator.Generator;
-import prototype.graph.Graph;
+import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.Generator;
+import ms.domwillia.city.graph.Graph;
 
 import javax.swing.*;
 import java.util.Observable;

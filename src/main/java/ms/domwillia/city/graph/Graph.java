@@ -1,8 +1,8 @@
-package prototype.graph;
+package ms.domwillia.city.graph;
 
-import prototype.Config;
-import prototype.RoadType;
-import prototype.generator.Density;
+import ms.domwillia.city.Config;
+import ms.domwillia.city.RoadType;
+import ms.domwillia.city.generator.Density;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

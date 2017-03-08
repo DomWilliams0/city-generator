@@ -1,10 +1,10 @@
-package prototype.generator;
+package ms.domwillia.city.generator;
 
-import prototype.Config;
-import prototype.RoadType;
-import prototype.generator.rules.GridRule;
-import prototype.graph.Graph;
-import prototype.graph.Vertex;
+import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.rules.GridRule;
+import ms.domwillia.city.graph.Graph;
+import ms.domwillia.city.RoadType;
+import ms.domwillia.city.graph.Vertex;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayDeque;

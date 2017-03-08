@@ -1,10 +1,10 @@
-package prototype.generator.rules;
+package ms.domwillia.city.generator.rules;
 
-import prototype.Config;
-import prototype.generator.Density;
-import prototype.generator.ProposedVertex;
-import prototype.generator.Utils;
-import prototype.graph.Vertex;
+import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.Density;
+import ms.domwillia.city.generator.ProposedVertex;
+import ms.domwillia.city.generator.Utils;
+import ms.domwillia.city.graph.Vertex;
 
 import java.util.List;
 

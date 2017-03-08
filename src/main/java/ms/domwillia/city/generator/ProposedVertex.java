@@ -1,8 +1,8 @@
-package prototype.generator;
+package ms.domwillia.city.generator;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import prototype.RoadType;
-import prototype.graph.Vertex;
+import ms.domwillia.city.RoadType;
+import ms.domwillia.city.graph.Vertex;
 
 import java.awt.geom.Point2D;
 

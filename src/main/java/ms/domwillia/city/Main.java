@@ -1,9 +1,9 @@
-package prototype;
+package ms.domwillia.city;
 
 
-import prototype.generator.Density;
-import prototype.generator.Generator;
-import prototype.graph.Graph;
+import ms.domwillia.city.graph.Graph;
+import ms.domwillia.city.generator.Density;
+import ms.domwillia.city.generator.Generator;
 
 public class Main
 {

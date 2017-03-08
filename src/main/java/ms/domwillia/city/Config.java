@@ -1,6 +1,5 @@
-package prototype;
+package ms.domwillia.city;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.awt.*;

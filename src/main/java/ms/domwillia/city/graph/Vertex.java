@@ -1,6 +1,6 @@
-package prototype.graph;
+package ms.domwillia.city.graph;
 
-import prototype.RoadType;
+import ms.domwillia.city.RoadType;
 
 import java.awt.geom.Point2D;
 

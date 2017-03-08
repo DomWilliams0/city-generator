@@ -1,6 +1,6 @@
-package prototype.gui.panel;
+package ms.domwillia.city.gui.panel;
 
-import prototype.gui.GeneratorModel;
+import ms.domwillia.city.gui.GeneratorModel;
 
 import javax.swing.*;
 import java.awt.*;

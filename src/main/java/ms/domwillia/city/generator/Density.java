@@ -1,7 +1,6 @@
-package prototype.generator;
+package ms.domwillia.city.generator;
 
-import prototype.Config;
-import prototype.OpenSimplexNoise;
+import ms.domwillia.city.Config;
 
 public class Density
 {
