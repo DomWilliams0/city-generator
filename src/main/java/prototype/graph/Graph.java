@@ -13,10 +13,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static prototype.Config.Key.ROAD_MAIN_RENDER_THICKNESS;
-import static prototype.Config.Key.ROAD_MINOR_RENDER_THICKNESS;
-import static prototype.Config.Key.VERTEX_RENDER_COLOUR;
-
 public class Graph
 {
 	private Map<Point2D, Vertex> vertices;
@@ -26,6 +22,9 @@ public class Graph
 
 	public Graph(int width, int height)
 	{
+		if (width < 10 || height < 10)
+			throw new IllegalArgumentException("Invalid graph size");
+
 		this.width = width;
 		this.height = height;
 		this.vertices = new HashMap<>();
@@ -117,7 +116,7 @@ public class Graph
 		}
 
 		// vertices
-		g.setColor(Config.getColour(VERTEX_RENDER_COLOUR));
+		g.setColor(Config.getColour(Config.Key.VERTEX_RENDER_COLOUR));
 		for (Vertex v : vertices.values())
 		{
 			drawOval(g, v.getPoint(), Config.getInt(Config.Key.VERTEX_RENDER_RADIUS), true);

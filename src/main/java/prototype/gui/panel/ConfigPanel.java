@@ -1,19 +1,25 @@
 package prototype.gui.panel;
 
 import prototype.Config;
+import prototype.gui.GeneratorModel;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
 class ConfigPanel extends JPanel
 {
-	ConfigPanel()
+	private final GeneratorModel model;
+
+	ConfigPanel(GeneratorModel model)
 	{
+		this.model = model;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.WEST;
@@ -100,6 +106,18 @@ class ConfigPanel extends JPanel
 					Config.set(key, input.getValue());
 				}
 
+			});
+
+			input.addKeyListener(new KeyAdapter()
+			{
+				@Override
+				public void keyPressed(KeyEvent keyEvent)
+				{
+					if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						model.generate();
+					}
+				}
 			});
 
 			return input;

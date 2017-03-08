@@ -15,7 +15,7 @@ public class ContentPanel extends JPanel
 
 		RenderPanel render = new RenderPanel(model);
 		ControlPanel control = new ControlPanel(model);
-		ConfigPanel config = new ConfigPanel();
+		ConfigPanel config = new ConfigPanel(model);
 
 		add(render, BorderLayout.CENTER);
 		add(control, BorderLayout.SOUTH);
