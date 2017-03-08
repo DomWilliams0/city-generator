@@ -1,7 +1,7 @@
 package ms.domwillia.city.gui.panel;
 
-import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.Config;
+import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.gui.GeneratorModel;
 
 import javax.swing.*;
@@ -26,7 +26,11 @@ class RenderPanel extends JPanel implements Observer
 
 		resetImage();
 
-		add(image, BorderLayout.CENTER);
+		JScrollPane scroll = new JScrollPane(image,
+			ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		add(scroll, BorderLayout.CENTER);
 	}
 
 	private void resetImage()
