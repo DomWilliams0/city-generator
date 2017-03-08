@@ -1,5 +1,6 @@
 package prototype.gui.panel;
 
+import prototype.Config;
 import prototype.graph.Graph;
 import prototype.gui.GeneratorModel;
 
@@ -21,6 +22,7 @@ class RenderPanel extends JPanel implements Observer
 		this.model = model;
 		this.image = new JLabel();
 		image.setBounds(getBounds());
+		image.setMinimumSize(getBounds().getSize());
 
 		resetImage();
 
@@ -29,8 +31,10 @@ class RenderPanel extends JPanel implements Observer
 
 	private void resetImage()
 	{
-		image.setIcon(null);
+		Graph placeholder = new Graph(Config.getInt(Config.Key.WORLD_WIDTH), Config.getInt(Config.Key.WORLD_HEIGHT));
+		image.setIcon(new ImageIcon(placeholder.render()));
 		image.setText("Nothing to see here");
+		image.setHorizontalTextPosition(SwingConstants.CENTER);
 	}
 
 	@Override
