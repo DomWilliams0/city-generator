@@ -4,8 +4,6 @@ import prototype.Config;
 import prototype.gui.GeneratorModel;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -82,31 +80,7 @@ class ConfigPanel extends JPanel
 			formatter.setValueClass(type);
 
 			JFormattedTextField input = new JFormattedTextField(formatter);
-			input.getDocument().addDocumentListener(new DocumentListener()
-			{
-				@Override
-				public void insertUpdate(DocumentEvent documentEvent)
-				{
-					update();
-				}
-
-				@Override
-				public void removeUpdate(DocumentEvent documentEvent)
-				{
-					update();
-				}
-
-				@Override
-				public void changedUpdate(DocumentEvent documentEvent)
-				{
-				}
-
-				private void update()
-				{
-					Config.set(key, input.getValue());
-				}
-
-			});
+			input.addPropertyChangeListener("value", e -> Config.set(key, e.getNewValue()));
 
 			input.addKeyListener(new KeyAdapter()
 			{
