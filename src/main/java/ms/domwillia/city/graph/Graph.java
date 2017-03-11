@@ -3,6 +3,7 @@ package ms.domwillia.city.graph;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.Density;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -33,17 +34,21 @@ public class Graph
 
 	public Vertex addVertex(double x, double y, RoadType type)
 	{
+		return addVertex(new Point2D.Double(x, y), type);
+	}
+
+	public Vertex addVertex(Point2D.Double point, RoadType type)
+	{
 		// bad coords
-		if (!isInRange(x, y))
-			throw new IllegalArgumentException("Vertex out of range (" + x + ", " + y + ")");
+		if (!isInRange(point.x, point.y))
+			throw new IllegalArgumentException("Vertex out of range (" + point.x + ", " + point.y + ")");
 
 		// fetch existing
-		Point2D.Double point = new Point2D.Double(x, y);
 		Vertex v = vertices.get(point);
 
 		if (v == null)
 		{
-			v = new Vertex(x, y, type);
+			v = new Vertex(point.x, point.y, type);
 			vertices.put(point, v);
 		} else if (v.getType() != type)
 		{
@@ -53,10 +58,14 @@ public class Graph
 		return v;
 	}
 
-
 	public boolean hasVertex(double x, double y)
 	{
-		return vertices.containsKey(new Point2D.Double(x, y));
+		return hasVertex(new Point2D.Double(x, y));
+	}
+
+	public boolean hasVertex(Point2D.Double point)
+	{
+		return vertices.containsKey(point);
 	}
 
 	public Collection<Vertex> getVertices()
@@ -190,4 +199,47 @@ public class Graph
 	{
 		return height;
 	}
+
+
+	public void scaleAndSubdivide(int factor, int subdivisions)
+	{
+		width *= factor;
+		height *= factor;
+
+		Map<Vertex, Set<Vertex>> edgesCopy = new LinkedHashMap<>(edges);
+
+		edges.clear();
+		vertices.clear();
+
+		edgesCopy.entrySet().forEach(e ->
+		{
+			Vertex srcVertex = e.getKey();
+			Point2D.Double src = new Point2D.Double(srcVertex.getPoint().x * factor, srcVertex.getPoint().y * factor);
+
+			Vector2D self = new Vector2D(src.x, src.y);
+			e.getValue().forEach(neighbour ->
+			{
+				Vector2D neighbourPos = new Vector2D(neighbour.getPoint().x * factor, neighbour.getPoint().y * factor);
+				Vector2D direction = neighbourPos.subtract(self).normalize();
+
+				double length = self.distance(neighbourPos);
+				double each = length / subdivisions;
+
+				Vertex[] newVertices = new Vertex[subdivisions + 1];
+				for (int i = 0; i <= subdivisions; i++)
+				{
+					Vector2D newPos = direction.scalarMultiply(each * i).add(self);
+					Vertex next = addVertex(newPos.getX(), newPos.getY(), srcVertex.getType());
+					newVertices[i] = next;
+				}
+
+				for (int i = 0; i < newVertices.length - 1; i++)
+				{
+					addEdge(newVertices[i], newVertices[i + 1]);
+				}
+			});
+		});
+	}
+
+
 }

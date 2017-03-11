@@ -64,6 +64,9 @@ public class Generator
 		if (maxTries < 0)
 			System.err.println("Total failure");
 
+		// TODO add to config
+		graph.scaleAndSubdivide(2, 5);
+
 	}
 
 	private void produceWithGlobalGoals(ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
