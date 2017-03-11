@@ -35,7 +35,10 @@ public class Config
 		ROAD_MAIN_RENDER_COLOUR(KeyType.COLOUR, "Main Road Colour"),
 		ROAD_MINOR_RENDER_COLOUR(KeyType.COLOUR, "Minor Road Colour"),
 		ROAD_MAIN_RENDER_THICKNESS(KeyType.INTEGER, "Main Road Thickness"),
-		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER, "Minor Road Thickness");
+		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER, "Minor Road Thickness"),
+
+		ROAD_MAIN_SCALE_FACTOR(KeyType.INTEGER, "Main Road Scale Factor"),
+		ROAD_MAIN_SUBDIVIDE_COUNT(KeyType.INTEGER, "Main Road Subdivision");
 
 		private final KeyType type;
 		private final String name;
@@ -90,6 +93,8 @@ public class Config
 		configMap.put(Key.ROAD_MINOR_RENDER_COLOUR, Color.BLUE);
 		configMap.put(Key.ROAD_MAIN_RENDER_THICKNESS, 3);
 		configMap.put(Key.ROAD_MINOR_RENDER_THICKNESS, 3);
+		configMap.put(Key.ROAD_MAIN_SCALE_FACTOR, 2);
+		configMap.put(Key.ROAD_MAIN_SUBDIVIDE_COUNT, 5);
 	}
 
 	public static int getInt(Key key)

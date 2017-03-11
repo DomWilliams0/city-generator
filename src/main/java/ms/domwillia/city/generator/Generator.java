@@ -64,8 +64,10 @@ public class Generator
 		if (maxTries < 0)
 			System.err.println("Total failure");
 
-		// TODO add to config
-		graph.scaleAndSubdivide(2, 5);
+		graph.scaleAndSubdivide(
+			Config.getInt(Config.Key.ROAD_MAIN_SCALE_FACTOR),
+			Config.getInt(Config.Key.ROAD_MAIN_SUBDIVIDE_COUNT)
+		);
 
 	}
 
