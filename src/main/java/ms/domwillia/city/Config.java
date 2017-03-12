@@ -22,23 +22,29 @@ public class Config
 		WORLD_WIDTH(KeyType.INTEGER, "Width"),
 		WORLD_HEIGHT(KeyType.INTEGER, "Height"),
 
-		MERGE_THRESHOLD(KeyType.DOUBLE),
-		ROAD_LENGTH(KeyType.DOUBLE),
+		MAIN_MERGE_THRESHOLD(KeyType.DOUBLE),
+		MAIN_ROAD_LENGTH(KeyType.DOUBLE),
+		MAIN_ANGLE_VARIATION(KeyType.DOUBLE),
+		MAIN_ROAD_CHANCE(KeyType.DOUBLE),
+
+		ROAD_MAIN_SCALE_FACTOR(KeyType.INTEGER, "Main Road Scale Factor"),
+		ROAD_MAIN_SUBDIVIDE_COUNT(KeyType.INTEGER, "Main Road Subdivision"),
+
+		MINOR_MERGE_THRESHOLD(KeyType.DOUBLE),
+		MINOR_ROAD_LENGTH(KeyType.DOUBLE),
+		MINOR_ANGLE_VARIATION(KeyType.DOUBLE),
+		MINOR_ROAD_CHANCE(KeyType.DOUBLE),
+
 		NOISE_SCALE(KeyType.DOUBLE),
-		ANGLE_VARIATION(KeyType.DOUBLE),
-		ROAD_CHANCE(KeyType.DOUBLE),
 		MINIMUM_VERTICES(KeyType.INTEGER),
 
 		RENDER_NOISE(KeyType.BOOLEAN),
 		VERTEX_RENDER_RADIUS(KeyType.INTEGER, "Vertex Radius"),
 		VERTEX_RENDER_COLOUR(KeyType.COLOUR, "Vertex Colour"),
 		ROAD_MAIN_RENDER_COLOUR(KeyType.COLOUR, "Main Road Colour"),
-		ROAD_MINOR_RENDER_COLOUR(KeyType.COLOUR, "Minor Road Colour"),
 		ROAD_MAIN_RENDER_THICKNESS(KeyType.INTEGER, "Main Road Thickness"),
-		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER, "Minor Road Thickness"),
-
-		ROAD_MAIN_SCALE_FACTOR(KeyType.INTEGER, "Main Road Scale Factor"),
-		ROAD_MAIN_SUBDIVIDE_COUNT(KeyType.INTEGER, "Main Road Subdivision");
+		ROAD_MINOR_RENDER_COLOUR(KeyType.COLOUR, "Minor Road Colour"),
+		ROAD_MINOR_RENDER_THICKNESS(KeyType.INTEGER, "Minor Road Thickness");
 
 		private final KeyType type;
 		private final String name;
@@ -77,24 +83,31 @@ public class Config
 		configMap = new EnumMap<>(Key.class);
 
 		// defaults
-		configMap.put(Key.WORLD_WIDTH, 600);
-		configMap.put(Key.WORLD_HEIGHT, 600);
+		configMap.put(Key.WORLD_WIDTH,                 400);
+		configMap.put(Key.WORLD_HEIGHT,                400);
 
-		configMap.put(Key.MERGE_THRESHOLD, 18.0);
-		configMap.put(Key.ROAD_LENGTH, 20.0);
-		configMap.put(Key.NOISE_SCALE, 100.0);
-		configMap.put(Key.ANGLE_VARIATION, 7.0);
-		configMap.put(Key.ROAD_CHANCE, 0.8);
-		configMap.put(Key.MINIMUM_VERTICES, 100);
-		configMap.put(Key.RENDER_NOISE, false);
-		configMap.put(Key.VERTEX_RENDER_RADIUS, 5);
-		configMap.put(Key.VERTEX_RENDER_COLOUR, Color.RED);
-		configMap.put(Key.ROAD_MAIN_RENDER_COLOUR, Color.BLACK);
-		configMap.put(Key.ROAD_MINOR_RENDER_COLOUR, Color.BLUE);
-		configMap.put(Key.ROAD_MAIN_RENDER_THICKNESS, 3);
-		configMap.put(Key.ROAD_MINOR_RENDER_THICKNESS, 3);
-		configMap.put(Key.ROAD_MAIN_SCALE_FACTOR, 2);
-		configMap.put(Key.ROAD_MAIN_SUBDIVIDE_COUNT, 5);
+		configMap.put(Key.MAIN_MERGE_THRESHOLD,        18.0);
+		configMap.put(Key.MAIN_ROAD_LENGTH,            20.0);
+		configMap.put(Key.MAIN_ANGLE_VARIATION,        7.0);
+		configMap.put(Key.MAIN_ROAD_CHANCE,            0.8);
+
+		configMap.put(Key.MINOR_MERGE_THRESHOLD,       6.0);
+		configMap.put(Key.MINOR_ROAD_LENGTH,           7.0);
+		configMap.put(Key.MINOR_ANGLE_VARIATION,       7.0);
+		configMap.put(Key.MINOR_ROAD_CHANCE,           0.7);
+
+
+		configMap.put(Key.MINIMUM_VERTICES,            100);
+		configMap.put(Key.NOISE_SCALE,                 100.0);
+		configMap.put(Key.RENDER_NOISE,                false);
+		configMap.put(Key.VERTEX_RENDER_RADIUS,        1);
+		configMap.put(Key.VERTEX_RENDER_COLOUR,        Color.CYAN);
+		configMap.put(Key.ROAD_MINOR_RENDER_THICKNESS, 1);
+		configMap.put(Key.ROAD_MINOR_RENDER_COLOUR,    Color.BLUE);
+		configMap.put(Key.ROAD_MAIN_RENDER_COLOUR,     Color.DARK_GRAY);
+		configMap.put(Key.ROAD_MAIN_RENDER_THICKNESS,  2);
+		configMap.put(Key.ROAD_MAIN_SCALE_FACTOR,      3);
+		configMap.put(Key.ROAD_MAIN_SUBDIVIDE_COUNT,   5);
 	}
 
 	public static int getInt(Key key)

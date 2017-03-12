@@ -50,9 +50,9 @@ public class Graph
 		{
 			v = new Vertex(point.x, point.y, type);
 			vertices.put(point, v);
-		} else if (v.getType() != type)
-		{
-			System.err.println("Mismatching type of vertex: " + v);
+//		} else if (v.getType() != type)
+//		{
+//			System.err.println("Mismatching type of vertex: " + v);
 		}
 
 		return v;
@@ -110,6 +110,10 @@ public class Graph
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 
+		// background
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
+
 		// noise
 		if (Config.getBoolean(Config.Key.RENDER_NOISE))
 		{
@@ -153,12 +157,6 @@ public class Graph
 				Point2D.Double vp = v.getPoint();
 				Point2D.Double np = neighbour.getPoint();
 				g.drawLine((int) vp.x, (int) vp.y, (int) np.x, (int) np.y);
-
-				// green start, pink end
-				g.setColor(Color.GREEN);
-				drawOval(g, vp, 2, false);
-				g.setColor(Color.PINK);
-				drawOval(g, np, 2, false);
 
 			}
 		}
