@@ -92,8 +92,8 @@ public class Config
 		configMap.put(Key.MAIN_ROAD_CHANCE,            0.8);
 
 		configMap.put(Key.MINOR_MERGE_THRESHOLD,       6.0);
-		configMap.put(Key.MINOR_ROAD_LENGTH,           7.0);
-		configMap.put(Key.MINOR_ANGLE_VARIATION,       7.0);
+		configMap.put(Key.MINOR_ROAD_LENGTH,           10.0);
+		configMap.put(Key.MINOR_ANGLE_VARIATION,       15.0);
 		configMap.put(Key.MINOR_ROAD_CHANCE,           0.7);
 
 
@@ -107,7 +107,7 @@ public class Config
 		configMap.put(Key.ROAD_MAIN_RENDER_COLOUR,     Color.DARK_GRAY);
 		configMap.put(Key.ROAD_MAIN_RENDER_THICKNESS,  2);
 		configMap.put(Key.ROAD_MAIN_SCALE_FACTOR,      3);
-		configMap.put(Key.ROAD_MAIN_SUBDIVIDE_COUNT,   5);
+		configMap.put(Key.ROAD_MAIN_SUBDIVIDE_COUNT,   6);
 	}
 
 	public static int getInt(Key key)
