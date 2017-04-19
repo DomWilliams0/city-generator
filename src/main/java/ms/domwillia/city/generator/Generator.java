@@ -87,24 +87,20 @@ public class Generator
 
 	private Point2D findClosestVertex(Point2D pos, double threshold, Point2D.Double moi, Point2D.Double moiSrc)
 	{
-		Point2D closest = null;
-		double closestDistance = Double.MAX_VALUE;
+		Point2D[] nearest = graph.getNearestNeighbours(3, pos);
 		double thresholdSq = threshold * threshold;
 
-		for (Vertex vertex : graph.getVertices())
+		for (Point2D p : nearest)
 		{
-			if (vertex.getPoint().equals(moi) || vertex.getPoint().equals(moiSrc))
+			if (p.equals(moi) || p.equals(moiSrc))
 				continue;
 
-			double d = vertex.getPoint().distanceSq(pos);
-			if (d <= thresholdSq && d < closestDistance)
-			{
-				closestDistance = d;
-				closest = vertex.getPoint();
-			}
+			double distance = p.distanceSq(pos);
+			if (distance <= thresholdSq)
+				return p;
 		}
 
-		return closest;
+		return null;
 	}
 
 	public Graph getGraph()

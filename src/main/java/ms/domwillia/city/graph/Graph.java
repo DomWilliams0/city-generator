@@ -1,5 +1,6 @@
 package ms.domwillia.city.graph;
 
+import com.jwetherell.algorithms.data_structures.KdTree;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.Density;
@@ -20,6 +21,7 @@ public class Graph
 	private Map<Vertex, Set<Vertex>> edges;
 
 	private int width, height;
+	private KdTree<SpatialVertex> kdTree;
 
 	public Graph(int width, int height)
 	{
@@ -30,6 +32,7 @@ public class Graph
 		this.height = height;
 		this.vertices = new HashMap<>();
 		this.edges = new HashMap<>();
+		this.kdTree = new KdTree<>();
 	}
 
 	public Vertex addVertex(double x, double y, RoadType type)
@@ -50,9 +53,8 @@ public class Graph
 		{
 			v = new Vertex(point.x, point.y, type);
 			vertices.put(point, v);
-//		} else if (v.getType() != type)
-//		{
-//			System.err.println("Mismatching type of vertex: " + v);
+
+			kdTree.add(new SpatialVertex(point.x, point.y));
 		}
 
 		return v;
@@ -208,14 +210,15 @@ public class Graph
 
 		edges.clear();
 		vertices.clear();
+		for (SpatialVertex vertex : kdTree)
+			kdTree.remove(vertex);
 
-		edgesCopy.entrySet().forEach(e ->
+		edgesCopy.forEach((srcVertex, value) ->
 		{
-			Vertex srcVertex = e.getKey();
 			Point2D.Double src = new Point2D.Double(srcVertex.getPoint().x * factor, srcVertex.getPoint().y * factor);
 
 			Vector2D self = new Vector2D(src.x, src.y);
-			e.getValue().forEach(neighbour ->
+			value.forEach(neighbour ->
 			{
 				Vector2D neighbourPos = new Vector2D(neighbour.getPoint().x * factor, neighbour.getPoint().y * factor);
 				Vector2D direction = neighbourPos.subtract(self).normalize();
@@ -239,5 +242,21 @@ public class Graph
 		});
 	}
 
+	public Point2D[] getNearestNeighbours(int k, Point2D point)
+	{
+		SpatialVertex value = new SpatialVertex(point.getX(), point.getY());
+		Collection<SpatialVertex> result = kdTree.nearestNeighbourSearch(k, value);
+		return result.stream()
+			.map(v -> new Point2D.Double(v.getX(), v.getY()))
+			.toArray(Point2D.Double[]::new);
+	}
+
+	private class SpatialVertex extends KdTree.XYZPoint
+	{
+		SpatialVertex(double x, double y)
+		{
+			super(x, y);
+		}
+	}
 
 }
