@@ -9,4 +9,11 @@ public class Utils
 	private Utils()
 	{
 	}
+
+	// http://stackoverflow.com/a/23157705
+	public static double scale(final double valueIn, final double baseMin, final double baseMax,
+	                           final double limitMin, final double limitMax)
+	{
+		return ((limitMax - limitMin) * (valueIn - baseMin) / (baseMax - baseMin)) + limitMin;
+	}
 }

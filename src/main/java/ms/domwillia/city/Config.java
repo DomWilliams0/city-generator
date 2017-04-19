@@ -53,7 +53,8 @@ public class Config
 
 		MAIN_MERGE_THRESHOLD(Section.MAIN, KeyType.DOUBLE),
 		MAIN_ROAD_LENGTH(Section.MAIN, KeyType.DOUBLE),
-		MAIN_ANGLE_VARIATION(Section.MAIN, KeyType.DOUBLE),
+		MAIN_ANGLE_VARIATION_MIN(Section.MAIN, KeyType.DOUBLE),
+		MAIN_ANGLE_VARIATION_MAX(Section.MAIN, KeyType.DOUBLE),
 		MAIN_ROAD_CHANCE(Section.MAIN, KeyType.DOUBLE),
 
 		MAIN_ROAD_SCALE_FACTOR(Section.MAIN, KeyType.INTEGER, "Main Road Scale Factor"),
@@ -61,7 +62,8 @@ public class Config
 
 		MINOR_MERGE_THRESHOLD(Section.MINOR, KeyType.DOUBLE),
 		MINOR_ROAD_LENGTH(Section.MINOR, KeyType.DOUBLE),
-		MINOR_ANGLE_VARIATION(Section.MINOR, KeyType.DOUBLE),
+		MINOR_ANGLE_VARIATION_MIN(Section.MINOR, KeyType.DOUBLE),
+		MINOR_ANGLE_VARIATION_MAX(Section.MINOR, KeyType.DOUBLE),
 		MINOR_ROAD_CHANCE(Section.MINOR, KeyType.DOUBLE),
 
 		NOISE_SCALE(Section.WORLD, KeyType.DOUBLE),
@@ -124,12 +126,14 @@ public class Config
 
 		configMap.put(Key.MAIN_MERGE_THRESHOLD, 18.0);
 		configMap.put(Key.MAIN_ROAD_LENGTH, 20.0);
-		configMap.put(Key.MAIN_ANGLE_VARIATION, 7.0);
+		configMap.put(Key.MAIN_ANGLE_VARIATION_MIN, 7.0);
+		configMap.put(Key.MAIN_ANGLE_VARIATION_MAX, 15.0);
 		configMap.put(Key.MAIN_ROAD_CHANCE, 0.8);
 
-		configMap.put(Key.MINOR_MERGE_THRESHOLD, 6.0);
+		configMap.put(Key.MINOR_MERGE_THRESHOLD, 8.0);
 		configMap.put(Key.MINOR_ROAD_LENGTH, 10.0);
-		configMap.put(Key.MINOR_ANGLE_VARIATION, 15.0);
+		configMap.put(Key.MINOR_ANGLE_VARIATION_MIN, 5.0);
+		configMap.put(Key.MINOR_ANGLE_VARIATION_MAX, 10.0);
 		configMap.put(Key.MINOR_ROAD_CHANCE, 0.7);
 
 
