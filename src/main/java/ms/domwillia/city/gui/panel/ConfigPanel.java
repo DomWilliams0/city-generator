@@ -20,14 +20,33 @@ class ConfigPanel extends JPanel
 		this.model = model;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.WEST;
 		c.gridx = 0;
+		c.anchor = GridBagConstraints.PAGE_START;
 
-		Arrays.stream(Config.Key.values())
-			.filter(x -> x.getType() != Config.KeyType.COLOUR)
-			.forEach(k -> add(new ConfigComponent(k), c)
-			);
+		Config.Section[] values = Config.Section.values();
+		for (Config.Section section : values)
+		{
+			if (++c.gridx >= 2)
+			{
+				c.gridx = 0;
+				c.anchor = GridBagConstraints.PAGE_END;
+			}
 
+			add(new ConfigSection(section), c);
+		}
+	}
+
+	class ConfigSection extends JPanel
+	{
+		ConfigSection(Config.Section section)
+		{
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+			setBorder(BorderFactory.createTitledBorder(section.getTitle()));
+			Arrays.stream(section.getKeys())
+				.filter(k -> k.getType() != Config.KeyType.COLOUR)
+				.forEach(k -> add(new ConfigComponent(k)));
+		}
 	}
 
 	class ConfigComponent extends JPanel
@@ -35,7 +54,6 @@ class ConfigPanel extends JPanel
 
 		ConfigComponent(Config.Key key)
 		{
-
 			JLabel label = new JLabel(key.toString());
 			JComponent input;
 

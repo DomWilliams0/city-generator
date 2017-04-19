@@ -123,8 +123,8 @@ public class Generator
 
 			generate(initialFrontier);
 			graph.scaleAndSubdivide(
-				Config.getInt(Config.Key.ROAD_MAIN_SCALE_FACTOR),
-				Config.getInt(Config.Key.ROAD_MAIN_SUBDIVIDE_COUNT)
+				Config.getInt(Config.Key.MAIN_ROAD_SCALE_FACTOR),
+				Config.getInt(Config.Key.MAIN_ROAD_SUBDIVIDE_COUNT)
 			);
 
 			// minor roads
