@@ -14,6 +14,7 @@ class RenderPanel extends JPanel implements Observer
 {
 	private final GeneratorModel model;
 	private final JLabel image;
+	private final JScrollPane scroll;
 
 	RenderPanel(GeneratorModel model)
 	{
@@ -26,9 +27,11 @@ class RenderPanel extends JPanel implements Observer
 
 		resetImage();
 
-		JScrollPane scroll = new JScrollPane(image,
+		scroll = new JScrollPane(image,
 			ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.getVerticalScrollBar().setUnitIncrement(10);
+		scroll.getHorizontalScrollBar().setUnitIncrement(10);
 
 		add(scroll, BorderLayout.CENTER);
 	}
@@ -49,5 +52,11 @@ class RenderPanel extends JPanel implements Observer
 
 		image.setText(null);
 		image.setIcon(new ImageIcon(render));
+
+		Rectangle bounds = scroll.getViewport().getViewRect();
+		Dimension size = scroll.getViewport().getViewSize();
+		int x = (size.width - bounds.width) / 2;
+		int y = (size.height - bounds.height) / 2;
+		scroll.getViewport().setViewPosition(new Point(x, y));
 	}
 }
