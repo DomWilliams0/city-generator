@@ -1,10 +1,12 @@
 package ms.domwillia.city.generator;
 
 import ms.domwillia.city.Config;
+import org.apache.commons.math3.util.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,23 +101,17 @@ public class PopulationDensity
 	private List<HotSpot> findInitialHotspots(double threshold)
 	{
 		List<HotSpot> out = new ArrayList<>();
-
-		double max = 1.0;
-		double radiusMax = Config.getDouble(Config.Key.NOISE_SCALE) * 2;
-		double radiusMin = radiusMax / 2;
+		double noiseScale = Config.getDouble(Config.Key.NOISE_SCALE);
 
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
-				double raw = getRawValue(x, y, max);
+				double raw = getRawValue(x, y, 1.0);
 				if (raw < threshold)
 					continue;
 
-				double radius = Utils.scale(raw,
-					threshold, max,
-					radiusMin, radiusMax);
-
+				double radius = calculateRadius(x, y, noiseScale);
 
 				HotSpot existing = getHotSpot(out, x, y, radius);
 				if (existing == null)
@@ -140,7 +136,32 @@ public class PopulationDensity
 		return out;
 	}
 
-	public void debugRender(Graphics2D g)
+	/**
+	 * @return Average some random points within the given distance to
+	 *         calculate the radius
+	 */
+	private double calculateRadius(int x, int y, double distanceToAverageIn)
+	{
+		// for avg
+		double total = 0;
+		int count = 5;
+
+		for (int i = 0; i < count; i++)
+		{
+			double r1 = distanceToAverageIn * Utils.RANDOM.nextDouble();
+			double r2 = distanceToAverageIn * Utils.RANDOM.nextDouble();
+
+			double rx = x + r2 * Math.cos(MathUtils.TWO_PI * r1 / r2);
+			double ry = y + r2 * Math.sin(MathUtils.TWO_PI * r1 / r2);
+
+			total += getRawValue(rx, ry, 1.0);
+		}
+
+		double avg = total / count;
+		return avg * distanceToAverageIn;
+	}
+
+	void debugRender(Graphics2D g)
 	{
 		g.setColor(Color.RED);
 
