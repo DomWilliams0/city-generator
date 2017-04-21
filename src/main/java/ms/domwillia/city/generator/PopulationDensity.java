@@ -7,7 +7,6 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PopulationDensity
 {
@@ -43,17 +42,6 @@ public class PopulationDensity
 		double dy = y - hotspot.centre.y;
 		double radSum = hotspot.radius + radius;
 		return dx * dx + dy * dy <= radSum * radSum;
-	}
-
-	private boolean hotspotIsOutsideWorld(HotSpot hotSpot)
-	{
-		boolean out = hotSpot.centre.x - hotSpot.radius < 0 ||
-			hotSpot.centre.y - hotSpot.radius < 0 ||
-			hotSpot.centre.x + hotSpot.radius > width ||
-			hotSpot.centre.y + hotSpot.radius > height;
-		if (out)
-			System.out.println("hotSpot = " + hotSpot);
-		return out;
 	}
 
 	private void placeHotspots()
@@ -133,7 +121,7 @@ public class PopulationDensity
 				if (existing == null)
 				{
 					// create new hotspot here
-					out.add(new HotSpot(new Point2D.Double(x, y), radius));
+					out.add(new HotSpot(new Point2D.Double(x, y), radius, raw));
 				} else
 				{
 					// positioned between the 2
@@ -187,17 +175,13 @@ public class PopulationDensity
 	{
 		Point2D.Double centre;
 		double radius;
+		double density;
 
-		public HotSpot()
-		{
-			this.centre = new Point2D.Double();
-			this.radius = 0.0;
-		}
-
-		public HotSpot(Point2D.Double centre, double radius)
+		HotSpot(Point2D.Double centre, double radius, double density)
 		{
 			this.centre = centre;
 			this.radius = radius;
+			this.density = density;
 		}
 
 		@Override
@@ -206,12 +190,19 @@ public class PopulationDensity
 			return "HotSpot{" +
 				"centre=" + centre +
 				", radius=" + radius +
+				", density=" + density +
 				'}';
 		}
 
-		public boolean intersects(HotSpot hotSpot)
+		boolean intersects(HotSpot hotSpot)
 		{
 			return doesIntersect(centre.x, centre.y, radius, hotSpot);
+		}
+
+		boolean contains(double x, double y)
+		{
+			double rad = radius / 2;
+			return centre.distanceSq(x, y) < rad * rad;
 		}
 	}
 
@@ -220,9 +211,19 @@ public class PopulationDensity
 	 */
 	public double getValue(double x, double y)
 	{
-		double raw = getRawValue(x, y, 0.5);
-		// TODO add hotspot
-		return raw;
+		double max = 0.5;
+
+		for (HotSpot hotspot : hotspots)
+		{
+			if (hotspot.contains(x, y))
+			{
+				max = hotspot.density;
+				break;
+			}
+		}
+
+
+		return getRawValue(x, y, max);
 	}
 
 	public double getValue(int x, int y)

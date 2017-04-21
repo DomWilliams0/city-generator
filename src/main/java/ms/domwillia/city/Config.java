@@ -138,7 +138,7 @@ public class Config
 
 
 		configMap.put(Key.MINIMUM_VERTICES, 100);
-		configMap.put(Key.NOISE_SCALE, 100.0);
+		configMap.put(Key.NOISE_SCALE, 50.0);
 		configMap.put(Key.RENDER_NOISE, true);
 		configMap.put(Key.VERTEX_RENDER_RADIUS, 1);
 		configMap.put(Key.VERTEX_RENDER_COLOUR, Color.CYAN);
