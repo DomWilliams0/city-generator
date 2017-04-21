@@ -1,6 +1,7 @@
 package ms.domwillia.city.gui;
 
 import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.Density;
 import ms.domwillia.city.generator.Generator;
 import ms.domwillia.city.graph.Graph;
 
@@ -19,6 +20,7 @@ public class GeneratorModel extends Observable
 	{
 		try
 		{
+			Density.reseed();
 			generator = new Generator(new Graph(
 				Config.getInt(Config.Key.WORLD_WIDTH),
 				Config.getInt(Config.Key.WORLD_HEIGHT))
