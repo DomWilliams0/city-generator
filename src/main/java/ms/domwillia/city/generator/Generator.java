@@ -13,6 +13,7 @@ import java.util.*;
 public class Generator
 {
 	private Graph graph;
+	private PopulationDensity density;
 	private Queue<ProposedVertex> frontier;
 
 	private GridRule rule;
@@ -20,6 +21,7 @@ public class Generator
 	public Generator(Graph graph)
 	{
 		this.graph = graph;
+		this.density = new PopulationDensity(graph.getWidth(), graph.getHeight(), 3);
 		this.frontier = new ArrayDeque<>();
 		this.rule = new GridRule();
 	}
@@ -55,7 +57,7 @@ public class Generator
 
 	private void produceWithGlobalGoals(ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
 	{
-		rule.suggestVertices(src, srcNewlyAdded, proposed);
+		rule.suggestVertices(density, src, srcNewlyAdded, proposed);
 	}
 
 	/**
@@ -110,28 +112,31 @@ public class Generator
 
 	public void generate()
 	{
-		int maxTries = 60;
-		do
-		{
-			// main roads first
-			Collection<ProposedVertex> initialFrontier = new ArrayList<>();
-			initMainFrontier(initialFrontier);
-
-			generate(initialFrontier);
-			graph.scaleAndSubdivide(
-				Config.getInt(Config.Key.MAIN_ROAD_SCALE_FACTOR),
-				Config.getInt(Config.Key.MAIN_ROAD_SUBDIVIDE_COUNT)
-			);
-
-			// minor roads
-			initialFrontier.clear();
-			initMinorFrontier(initialFrontier);
-			generate(initialFrontier);
-		}
-		while (--maxTries > 0 && graph.getVertices().size() < Config.getInt(Config.Key.MINIMUM_VERTICES));
-
-		if (maxTries < 0)
-			System.err.println("Total failure");
+		// reseed density function
+		density = new PopulationDensity(graph.getWidth(), graph.getHeight(), 3);
+//
+//		int maxTries = 60;
+//		do
+//		{
+//			// main roads first
+//			Collection<ProposedVertex> initialFrontier = new ArrayList<>();
+//			initMainFrontier(initialFrontier);
+//
+//			generate(initialFrontier);
+//			graph.scaleAndSubdivide(
+//				Config.getInt(Config.Key.MAIN_ROAD_SCALE_FACTOR),
+//				Config.getInt(Config.Key.MAIN_ROAD_SUBDIVIDE_COUNT)
+//			);
+//
+//			// minor roads
+//			initialFrontier.clear();
+//			initMinorFrontier(initialFrontier);
+//			generate(initialFrontier);
+//		}
+//		while (--maxTries > 0 && graph.getVertices().size() < Config.getInt(Config.Key.MINIMUM_VERTICES));
+//
+//		if (maxTries < 0)
+//			System.err.println("Total failure");
 
 
 	}

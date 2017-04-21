@@ -3,7 +3,7 @@ package ms.domwillia.city.graph;
 import com.jwetherell.algorithms.data_structures.KdTree;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
-import ms.domwillia.city.generator.Density;
+import ms.domwillia.city.generator.PopulationDensity;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import javax.imageio.ImageIO;
@@ -117,18 +117,18 @@ public class Graph
 		g.fillRect(0, 0, width, height);
 
 		// noise
-		if (Config.getBoolean(Config.Key.RENDER_NOISE))
-		{
-			for (int x = 0; x < width; x++)
-			{
-				for (int y = 0; y < height; y++)
-				{
-					double noise = Density.getValue(x, y);
-					int pixel = (int) (noise * 255);
-					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
-				}
-			}
-		}
+//		if (Config.getBoolean(Config.Key.RENDER_NOISE))
+//		{
+//			for (int x = 0; x < width; x++)
+//			{
+//				for (int y = 0; y < height; y++)
+//				{
+//					double noise = PopulationDensity.getValue(x, y);
+//					int pixel = (int) (noise * 255);
+//					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
+//				}
+//			}
+//		}
 
 		// vertices
 		g.setColor(Config.getColour(Config.Key.VERTEX_RENDER_COLOUR));

@@ -2,7 +2,7 @@ package ms.domwillia.city;
 
 
 import ms.domwillia.city.graph.Graph;
-import ms.domwillia.city.generator.Density;
+import ms.domwillia.city.generator.PopulationDensity;
 import ms.domwillia.city.generator.Generator;
 
 public class Main
@@ -53,7 +53,6 @@ public class Main
 		{
 			for (int i = 0; i < count; i++)
 			{
-				Density.reseed();
 				Graph graph = new Graph(width, height);
 				Generator g = new Generator(graph);
 
