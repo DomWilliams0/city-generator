@@ -3,17 +3,14 @@ package ms.domwillia.city.graph;
 import com.jwetherell.algorithms.data_structures.KdTree;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
-import ms.domwillia.city.generator.PopulationDensity;
+import org.apache.commons.math3.geometry.euclidean.twod.SubLine;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 
 public class Graph
 {
@@ -203,6 +200,82 @@ public class Graph
 			.map(v -> new Point2D.Double(v.getX(), v.getY()))
 			.toArray(Point2D.Double[]::new);
 	}
+
+
+	public void removeIntersectingEdges()
+	{
+		List<EdgeLine> lines = new ArrayList<>();
+
+		// collect lines
+		edges.forEach((src, dsts) ->
+			dsts.forEach(dst ->
+				lines.add(new EdgeLine(src, dst))));
+
+		lines.forEach(a ->
+		{
+			if (a.removed)
+				return;
+
+			lines.forEach(b ->
+			{
+				if (a.hashCode() <= b.hashCode() || b.removed)
+					return;
+
+				boolean remove = false;
+
+				Vector2D intersection = a.line.intersection(b.line, false);
+				if (intersection != null)
+				{
+					// intersects
+					remove = true;
+				}
+				else
+				{
+					// too close together
+					Point2D.Double aMid = new Point2D.Double(
+						(a.src.getPoint().x + a.dst.getPoint().x) / 2,
+						(a.src.getPoint().y + a.dst.getPoint().y) / 2
+					);
+					Point2D.Double bMid = new Point2D.Double(
+						(b.src.getPoint().x + b.dst.getPoint().x) / 2,
+						(b.src.getPoint().y + b.dst.getPoint().y) / 2
+					);
+
+					double distance = aMid.distance(bMid);
+					if (distance > 0 && distance < 20)
+						remove = true;
+				}
+
+				if (remove)
+				{
+					removeEdge(b.src, b.dst);
+					b.removed = true;
+				}
+			});
+		});
+
+	}
+
+	private class EdgeLine
+	{
+		SubLine line;
+		Vertex src, dst;
+		boolean removed;
+
+		EdgeLine(Vertex src, Vertex dst)
+		{
+			this.src = src;
+			this.dst = dst;
+//			this.line = new Line2D.Double(src.getPoint(), dst.getPoint());
+			this.line = new SubLine(
+				new Vector2D(src.getPoint().x, src.getPoint().y),
+				new Vector2D(dst.getPoint().x, dst.getPoint().y),
+				0.0000001
+			);
+			this.removed = false;
+		}
+	}
+
 
 	private class SpatialVertex extends KdTree.XYZPoint
 	{

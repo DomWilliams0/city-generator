@@ -1,5 +1,6 @@
 package ms.domwillia.city.generator;
 
+import com.jwetherell.algorithms.data_structures.KdTree;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.rules.GridRule;
@@ -120,6 +121,9 @@ public class Generator
 
 		// reseed density function
 		density = new PopulationDensity(graph.getWidth(), graph.getHeight());
+
+		// add main roads between hotspots
+		connectHotspots();
 //
 //		int maxTries = 60;
 //		do
@@ -145,6 +149,38 @@ public class Generator
 //			System.err.println("Total failure");
 
 
+	}
+
+	private void connectHotspots()
+	{
+		KdTree<KdTree.XYZPoint> kdTree = new KdTree<>();
+		Map<KdTree.XYZPoint, PopulationHotspot> hotspotLookup = new HashMap<>();
+		density.getHotspots().forEach(h ->
+		{
+			KdTree.XYZPoint key = new KdTree.XYZPoint(h.centre.x, h.centre.y);
+			hotspotLookup.put(key, h);
+			kdTree.add(key);
+		});
+
+		hotspotLookup.forEach((point, hotspot) ->
+		{
+			Collection<KdTree.XYZPoint> neighbours = kdTree.nearestNeighbourSearch(4, point);
+			Vertex srcVertex = graph.addVertex(hotspot.centre, RoadType.MAIN);
+
+			neighbours.forEach(neighbourPos ->
+			{
+				if (neighbourPos == point)
+					return;
+
+				PopulationHotspot neighbour = hotspotLookup.get(neighbourPos);
+				Vertex dstVertex = graph.addVertex(neighbour.centre, RoadType.MAIN);
+
+				graph.addEdge(srcVertex, dstVertex);
+			});
+		});
+
+		// remove intersections
+		graph.removeIntersectingEdges();
 	}
 
 	private void initMinorFrontier(Collection<ProposedVertex> initialFrontier)

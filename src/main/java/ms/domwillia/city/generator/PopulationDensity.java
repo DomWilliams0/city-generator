@@ -38,6 +38,11 @@ public class PopulationDensity
 		return null;
 	}
 
+	public List<PopulationHotspot> getHotspots()
+	{
+		return hotspots;
+	}
+
 	private void placeHotspots()
 	{
 		double threshold = 0.75;
