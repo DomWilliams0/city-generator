@@ -27,7 +27,9 @@ public class GeneratorModel extends Observable
 			generator.generate();
 		} catch (RuntimeException e)
 		{
-			JOptionPane.showMessageDialog(null,  e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+			e.getMessage() == null ? e.toString() : e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
