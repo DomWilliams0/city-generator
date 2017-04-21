@@ -16,7 +16,7 @@ public class PopulationDensity
 	private final int height;
 	private final OpenSimplexNoise noise;
 
-	private final List<HotSpot> hotspots;
+	private final List<PopulationHotspot> hotspots;
 
 	public PopulationDensity(int width, int height)
 	{
@@ -28,37 +28,29 @@ public class PopulationDensity
 		placeHotspots();
 	}
 
-	private HotSpot getHotSpot(List<HotSpot> hotspots, double x, double y, double radius)
+	private PopulationHotspot getHotSpot(List<PopulationHotspot> hotspots, double x, double y, double radius)
 	{
 		// intersects other hotspot
-		for (HotSpot hotspot : hotspots)
-			if (doesIntersect(x, y, radius, hotspot))
+		for (PopulationHotspot hotspot : hotspots)
+			if (hotspot.intersects(x, y, radius))
 				return hotspot;
 
 		return null;
-	}
-
-	private boolean doesIntersect(double x, double y, double radius, HotSpot hotspot)
-	{
-		double dx = x - hotspot.centre.x;
-		double dy = y - hotspot.centre.y;
-		double radSum = hotspot.radius + radius;
-		return dx * dx + dy * dy <= radSum * radSum;
 	}
 
 	private void placeHotspots()
 	{
 		double threshold = 0.75;
 
-		List<HotSpot> tempHotspots = findInitialHotspots(threshold);
+		List<PopulationHotspot> tempHotspots = findInitialHotspots(threshold);
 
 		// remove intersecting hotspots
 		// TODO surely these should be filtered out above?
-		List<HotSpot> bestHotspots = new ArrayList<>(tempHotspots.size());
-		for (HotSpot a : tempHotspots)
+		List<PopulationHotspot> bestHotspots = new ArrayList<>(tempHotspots.size());
+		for (PopulationHotspot a : tempHotspots)
 		{
 			boolean ignore = false;
-			for (HotSpot b : tempHotspots)
+			for (PopulationHotspot b : tempHotspots)
 			{
 				if (a.hashCode() > b.hashCode() && a.intersects(b))
 				{
@@ -75,18 +67,18 @@ public class PopulationDensity
 			return;
 
 		// find top best
-		List<HotSpot> sorted = bestHotspots.stream()
+		List<PopulationHotspot> sorted = bestHotspots.stream()
 //			.filter(h -> !hotspotIsOutsideWorld(h))
 			.sorted((a, b) -> Double.compare(b.radius, a.radius))
 			.collect(Collectors.toList());
 
-		Iterator<HotSpot> it = sorted.iterator();
-		HotSpot last = it.next();
+		Iterator<PopulationHotspot> it = sorted.iterator();
+		PopulationHotspot last = it.next();
 		hotspots.add(last);
 
 		while (it.hasNext())
 		{
-			HotSpot curr = it.next();
+			PopulationHotspot curr = it.next();
 
 			double diff = (last.radius - curr.radius) / curr.radius;
 			if (diff > 0.2 && hotspots.size() > 3)
@@ -98,9 +90,9 @@ public class PopulationDensity
 
 	}
 
-	private List<HotSpot> findInitialHotspots(double threshold)
+	private List<PopulationHotspot> findInitialHotspots(double threshold)
 	{
-		List<HotSpot> out = new ArrayList<>();
+		List<PopulationHotspot> out = new ArrayList<>();
 		double noiseScale = Config.getDouble(Config.Key.NOISE_SCALE);
 
 		for (int y = 0; y < height; y++)
@@ -113,11 +105,11 @@ public class PopulationDensity
 
 				double radius = calculateRadius(x, y, noiseScale);
 
-				HotSpot existing = getHotSpot(out, x, y, radius);
+				PopulationHotspot existing = getHotSpot(out, x, y, radius);
 				if (existing == null)
 				{
 					// create new hotspot here
-					out.add(new HotSpot(new Point2D.Double(x, y), radius, raw));
+					out.add(new PopulationHotspot(new Point2D.Double(x, y), radius, raw));
 				} else
 				{
 					// positioned between the 2
@@ -138,7 +130,7 @@ public class PopulationDensity
 
 	/**
 	 * @return Average some random points within the given distance to
-	 *         calculate the radius
+	 * calculate the radius
 	 */
 	private double calculateRadius(int x, int y, double distanceToAverageIn)
 	{
@@ -165,7 +157,7 @@ public class PopulationDensity
 	{
 		g.setColor(Color.RED);
 
-		for (HotSpot hotspot : hotspots)
+		for (PopulationHotspot hotspot : hotspots)
 		{
 			double x = hotspot.centre.x;
 			double y = hotspot.centre.y;
@@ -173,9 +165,7 @@ public class PopulationDensity
 			g.drawOval((int) (x - rad / 2), (int) (y - rad / 2), rad, rad);
 			g.drawRect((int) x, (int) y, 1, 1);
 		}
-
 	}
-
 
 	/**
 	 * @return Raw untouched value between 0 and 0.75
@@ -192,41 +182,6 @@ public class PopulationDensity
 		return Math.min(max, Math.max(new_min, new_value));
 	}
 
-	class HotSpot
-	{
-		Point2D.Double centre;
-		double radius;
-		double density;
-
-		HotSpot(Point2D.Double centre, double radius, double density)
-		{
-			this.centre = centre;
-			this.radius = radius;
-			this.density = density;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "HotSpot{" +
-				"centre=" + centre +
-				", radius=" + radius +
-				", density=" + density +
-				'}';
-		}
-
-		boolean intersects(HotSpot hotSpot)
-		{
-			return doesIntersect(centre.x, centre.y, radius, hotSpot);
-		}
-
-		boolean contains(double x, double y)
-		{
-			double rad = radius / 2;
-			return centre.distanceSq(x, y) < rad * rad;
-		}
-	}
-
 	/**
 	 * @return Hotspots included
 	 */
@@ -234,7 +189,7 @@ public class PopulationDensity
 	{
 		double max = 0.5;
 
-		for (HotSpot hotspot : hotspots)
+		for (PopulationHotspot hotspot : hotspots)
 		{
 			if (hotspot.contains(x, y))
 			{
