@@ -22,6 +22,7 @@ public class Generator
 {
 	private Graph graph;
 	private PopulationDensity density;
+	private boolean generated;
 	private Queue<ProposedVertex> frontier;
 
 	private GridRule rule;
@@ -29,9 +30,9 @@ public class Generator
 	public Generator(int width, int height)
 	{
 		this.graph = new Graph(width, height);
-		this.density = new PopulationDensity(graph.getWidth(), graph.getHeight(), 3);
 		this.frontier = new ArrayDeque<>();
 		this.rule = new GridRule();
+		this.generated = false;
 	}
 
 	private void generate(Collection<ProposedVertex> initialFrontier)
@@ -115,8 +116,10 @@ public class Generator
 
 	public void generate()
 	{
+		generated = true;
+
 		// reseed density function
-		density = new PopulationDensity(graph.getWidth(), graph.getHeight(), 3);
+		density = new PopulationDensity(graph.getWidth(), graph.getHeight());
 //
 //		int maxTries = 60;
 //		do
@@ -199,6 +202,9 @@ public class Generator
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
 
+		if (!generated)
+			return image;
+
 		// noise
 		if (Config.getBoolean(Config.Key.RENDER_NOISE))
 		{
@@ -208,6 +214,7 @@ public class Generator
 				{
 					double noise = density.getValue(x, y);
 					int pixel = (int) (noise * 255);
+					pixel = 255 - pixel; // invert
 					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
 				}
 			}
@@ -215,6 +222,10 @@ public class Generator
 
 		// graph
 		graph.render(g);
+
+		// extras
+		density.debugRender(g);
+
 		return image;
 	}
 

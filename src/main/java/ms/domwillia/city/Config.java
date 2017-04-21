@@ -121,8 +121,8 @@ public class Config
 		configMap = new EnumMap<>(Key.class);
 
 		// defaults
-		configMap.put(Key.WORLD_WIDTH, 400);
-		configMap.put(Key.WORLD_HEIGHT, 400);
+		configMap.put(Key.WORLD_WIDTH, 600);
+		configMap.put(Key.WORLD_HEIGHT, 600);
 
 		configMap.put(Key.MAIN_MERGE_THRESHOLD, 18.0);
 		configMap.put(Key.MAIN_ROAD_LENGTH, 20.0);
@@ -138,7 +138,7 @@ public class Config
 
 
 		configMap.put(Key.MINIMUM_VERTICES, 100);
-		configMap.put(Key.NOISE_SCALE, 300.0);
+		configMap.put(Key.NOISE_SCALE, 100.0);
 		configMap.put(Key.RENDER_NOISE, true);
 		configMap.put(Key.VERTEX_RENDER_RADIUS, 1);
 		configMap.put(Key.VERTEX_RENDER_COLOUR, Color.CYAN);
