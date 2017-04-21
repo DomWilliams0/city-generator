@@ -53,12 +53,9 @@ public class Main
 		{
 			for (int i = 0; i < count; i++)
 			{
-				Graph graph = new Graph(width, height);
-				Generator g = new Generator(graph);
-
+				Generator g = new Generator(width, height);
 				g.generate();
-
-				graph.export(DIR, FORMAT, startIndex++);
+				g.export(DIR, FORMAT, startIndex++);
 			}
 		}
 	}

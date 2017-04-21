@@ -20,9 +20,9 @@ public class GeneratorModel extends Observable
 	{
 		try
 		{
-			generator = new Generator(new Graph(
+			generator = new Generator(
 				Config.getInt(Config.Key.WORLD_WIDTH),
-				Config.getInt(Config.Key.WORLD_HEIGHT))
+				Config.getInt(Config.Key.WORLD_HEIGHT)
 			);
 			generator.generate();
 		} catch (RuntimeException e)
@@ -35,8 +35,8 @@ public class GeneratorModel extends Observable
 		notifyObservers();
 	}
 
-	public Graph getGraph()
+	public Generator getGenerator()
 	{
-		return generator.getGraph();
+		return generator;
 	}
 }

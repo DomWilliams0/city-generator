@@ -1,6 +1,7 @@
 package ms.domwillia.city.gui.panel;
 
 import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.Generator;
 import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.gui.GeneratorModel;
 
@@ -38,7 +39,7 @@ class RenderPanel extends JPanel implements Observer
 
 	private void resetImage()
 	{
-		Graph placeholder = new Graph(Config.getInt(Config.Key.WORLD_WIDTH), Config.getInt(Config.Key.WORLD_HEIGHT));
+		Generator placeholder = new Generator(Config.getInt(Config.Key.WORLD_WIDTH), Config.getInt(Config.Key.WORLD_HEIGHT));
 		image.setIcon(new ImageIcon(placeholder.render()));
 		image.setText("Nothing to see here");
 		image.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -47,8 +48,8 @@ class RenderPanel extends JPanel implements Observer
 	@Override
 	public void update(Observable o, Object arg)
 	{
-		Graph graph = model.getGraph();
-		BufferedImage render = graph.render();
+		Generator generator = model.getGenerator();
+		BufferedImage render = generator.render();
 
 		image.setText(null);
 		image.setIcon(new ImageIcon(render));

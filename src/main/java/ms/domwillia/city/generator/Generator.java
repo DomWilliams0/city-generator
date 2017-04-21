@@ -7,8 +7,16 @@ import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.graph.Vertex;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
+import java.util.Queue;
 
 public class Generator
 {
@@ -18,9 +26,9 @@ public class Generator
 
 	private GridRule rule;
 
-	public Generator(Graph graph)
+	public Generator(int width, int height)
 	{
-		this.graph = graph;
+		this.graph = new Graph(width, height);
 		this.density = new PopulationDensity(graph.getWidth(), graph.getHeight(), 3);
 		this.frontier = new ArrayDeque<>();
 		this.rule = new GridRule();
@@ -105,11 +113,6 @@ public class Generator
 		return null;
 	}
 
-	public Graph getGraph()
-	{
-		return graph;
-	}
-
 	public void generate()
 	{
 		// reseed density function
@@ -183,4 +186,60 @@ public class Generator
 
 		initialFrontier.add(a);
 	}
+
+	public BufferedImage render()
+	{
+		int width = graph.getWidth();
+		int height = graph.getHeight();
+
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = image.createGraphics();
+
+		// background
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
+
+		// noise
+		if (Config.getBoolean(Config.Key.RENDER_NOISE))
+		{
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					double noise = density.getValue(x, y);
+					int pixel = (int) (noise * 255);
+					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
+				}
+			}
+		}
+
+		// graph
+		graph.render(g);
+		return image;
+	}
+
+	public void export(String dir, String nameFormat, int index)
+	{
+		File out = Paths.get(dir, String.format(nameFormat, index)).toFile();
+
+		File parent = out.getParentFile();
+		if (!parent.exists())
+			parent.mkdir();
+
+		out.delete();
+
+		BufferedImage image = render();
+		synchronized (Graph.class)
+		{
+			try
+			{
+				ImageIO.write(image, "png", out);
+				System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), out.getAbsolutePath());
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

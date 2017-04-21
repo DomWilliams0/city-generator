@@ -107,29 +107,8 @@ public class Graph
 			g.drawOval((int) point.getX() - radius / 2, (int) (point.getY() - radius / 2), radius, radius);
 	}
 
-	public BufferedImage render()
+	public void render(Graphics2D g)
 	{
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = image.createGraphics();
-
-		// background
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, width, height);
-
-		// noise
-//		if (Config.getBoolean(Config.Key.RENDER_NOISE))
-//		{
-//			for (int x = 0; x < width; x++)
-//			{
-//				for (int y = 0; y < height; y++)
-//				{
-//					double noise = PopulationDensity.getValue(x, y);
-//					int pixel = (int) (noise * 255);
-//					image.setRGB(x, y, new Color(pixel, pixel, pixel).getRGB());
-//				}
-//			}
-//		}
-
 		// vertices
 		g.setColor(Config.getColour(Config.Key.VERTEX_RENDER_COLOUR));
 		for (Vertex v : vertices.values())
@@ -160,32 +139,6 @@ public class Graph
 				Point2D.Double np = neighbour.getPoint();
 				g.drawLine((int) vp.x, (int) vp.y, (int) np.x, (int) np.y);
 
-			}
-		}
-
-		return image;
-	}
-
-	public void export(String dir, String nameFormat, int index)
-	{
-		File out = Paths.get(dir, String.format(nameFormat, index)).toFile();
-
-		File parent = out.getParentFile();
-		if (!parent.exists())
-			parent.mkdir();
-
-		out.delete();
-
-		BufferedImage image = render();
-		synchronized (Graph.class)
-		{
-			try
-			{
-				ImageIO.write(image, "png", out);
-				System.out.printf("%d: exported to '%s'\n", Thread.currentThread().getId(), out.getAbsolutePath());
-			} catch (IOException e)
-			{
-				e.printStackTrace();
 			}
 		}
 	}
