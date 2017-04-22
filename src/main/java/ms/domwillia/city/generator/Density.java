@@ -8,11 +8,17 @@ public class Density
 	private final int height;
 	private final OpenSimplexNoise noise;
 
+	private final OpenSimplexNoise random;
+	private int randomIndex;
+
 	public Density(int width, int height)
 	{
 		this.width = width;
 		this.height = height;
-		this.noise = new OpenSimplexNoise(System.nanoTime());
+		long seed = System.nanoTime();
+		this.noise = new OpenSimplexNoise(seed);
+		this.random = new OpenSimplexNoise(seed + 1);
+		this.randomIndex = 0;
 	}
 
 	/**
@@ -41,6 +47,13 @@ public class Density
 	public double getValue(int x, int y)
 	{
 		return getValue((double) x, (double) y);
+	}
+
+	public double getRandom()
+	{
+		return Utils.scale(random.eval((double) (randomIndex++), 0, 0),
+			-1.0, 1.0,
+			0.0, 1.0);
 	}
 
 }

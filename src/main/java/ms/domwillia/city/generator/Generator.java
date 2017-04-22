@@ -1,6 +1,5 @@
 package ms.domwillia.city.generator;
 
-import com.jwetherell.algorithms.data_structures.KdTree;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.rules.GridRule;
@@ -21,8 +20,10 @@ import java.util.Queue;
 
 public class Generator
 {
+	private Landscape landscape;
 	private Graph graph;
 	private Density density;
+
 	private boolean generated;
 	private Queue<ProposedVertex> frontier;
 
@@ -121,6 +122,19 @@ public class Generator
 
 		// reseed density function
 		density = new Density(graph.getWidth(), graph.getHeight());
+
+		// create landscape
+		landscape = new Landscape(graph.getWidth(), graph.getHeight());
+
+		// create a river
+		landscape.generateRiver(
+			25,
+			Math.PI / 4,
+			0.5,
+			5
+		);
+
+
 //
 //		int maxTries = 60;
 //		do
@@ -220,6 +234,9 @@ public class Generator
 				}
 			}
 		}
+
+		// landscape
+		landscape.render(g);
 
 		// graph
 		graph.render(g);
