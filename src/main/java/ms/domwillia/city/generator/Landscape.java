@@ -1,6 +1,7 @@
 package ms.domwillia.city.generator;
 
 import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.util.NoiseRandom;
 import ms.domwillia.city.generator.util.Utils;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
@@ -9,6 +10,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Landscape
 {
@@ -57,12 +59,13 @@ public class Landscape
 
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
 	{
-		Density density = new Density(20); // river scale is smaller
+		Density density = new Density(20);
+		NoiseRandom rand = new NoiseRandom(10);
 
 		// random seed point
 		// TODO generate on any side
 		Point2D.Double pos = new Point2D.Double(
-			density.getRandom() * width,
+			Utils.RANDOM.nextDouble() * width,
 			0
 		);
 		Vector2D direction = new Vector2D(0, 1); // down
@@ -82,7 +85,7 @@ public class Landscape
 			{
 				double currentAngle = Math.atan2(direction.getY(), direction.getX());
 
-				double searchAngle = currentAngle + (density.getRandom() * scanAngle * 2) - scanAngle;
+				double searchAngle = currentAngle + (rand.getRandom() * scanAngle * 2) - scanAngle;
 
 				Point2D.Double check = new Point2D.Double(
 					pos.x + scanRange * Math.cos(searchAngle),

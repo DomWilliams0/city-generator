@@ -2,15 +2,11 @@ package ms.domwillia.city.generator;
 
 import ms.domwillia.city.Config;
 import ms.domwillia.city.generator.util.OpenSimplexNoise;
-import ms.domwillia.city.generator.util.Utils;
 
 public class Density
 {
 	private final OpenSimplexNoise noise;
 	private final double scale;
-
-	private final OpenSimplexNoise random;
-	private int randomIndex;
 
 	public Density()
 	{
@@ -22,8 +18,6 @@ public class Density
 		long seed = System.nanoTime();
 		this.scale = scale;
 		this.noise = new OpenSimplexNoise(seed);
-		this.random = new OpenSimplexNoise(seed + 1);
-		this.randomIndex = 0;
 	}
 
 	/**
@@ -52,12 +46,4 @@ public class Density
 	{
 		return getValue((double) x, (double) y);
 	}
-
-	public double getRandom()
-	{
-		return Utils.scale(random.eval((double) (randomIndex++), 0, 0),
-			-1.0, 1.0,
-			0.0, 1.0);
-	}
-
 }
