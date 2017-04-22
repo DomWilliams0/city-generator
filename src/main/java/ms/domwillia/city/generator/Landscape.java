@@ -96,7 +96,7 @@ public class Landscape
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
 	{
 		Density density = new Density(10);
-		NoiseRandom rand = new NoiseRandom(1);
+		NoiseRandom rand = new NoiseRandom();
 
 		// random seed point
 		Point2D.Double pos = new Point2D.Double();

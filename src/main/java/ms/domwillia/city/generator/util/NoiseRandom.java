@@ -4,11 +4,11 @@ public class NoiseRandom
 {
 	private final OpenSimplexNoise random;
 	private final double scale;
-	private int randomIndex;
+	private double randomIndex;
 
 	public NoiseRandom()
 	{
-		this(20);
+		this(0.5);
 	}
 
 	public NoiseRandom(double scale)
@@ -20,7 +20,7 @@ public class NoiseRandom
 
 	public double getRandom()
 	{
-		return Utils.scale(random.eval((double) (randomIndex += scale), 0, 0),
+		return Utils.scale(random.eval(randomIndex += scale, 0, 0),
 			-1.0, 1.0,
 			0.0, 1.0);
 	}
