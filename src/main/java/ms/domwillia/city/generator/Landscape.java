@@ -50,7 +50,7 @@ public class Landscape
 		}
 
 		if (maxAttempts < 0)
-			System.err.println("Aborted river generation after too many tries");
+			System.err.println("Aborted river generation after too many tries, settling with " + riverPoints.size());
 
 		final int scale = 3;
 
