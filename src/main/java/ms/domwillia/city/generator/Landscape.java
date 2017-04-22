@@ -4,6 +4,7 @@ import ms.domwillia.city.Config;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class Landscape
 	private final int height;
 
 	private List<Point2D.Double> river = new ArrayList<>();
+	private Path2D.Double riverPath;
 
 	public Landscape(int width, int height)
 	{
@@ -41,6 +43,15 @@ public class Landscape
 
 		if (maxAttempts < 0)
 			System.err.println("Aborted river generation after too many tries");
+
+		riverPath = new Path2D.Double();
+		for (int i = 0, riverSize = river.size() - 1; i < riverSize; i++)
+		{
+			Point2D.Double curr = river.get(i);
+			Point2D.Double next = river.get(i + 1);
+			riverPath.moveTo(curr.x, curr.y);
+			riverPath.lineTo(next.x, next.y);
+		}
 	}
 
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
@@ -100,10 +111,15 @@ public class Landscape
 
 	void render(Graphics2D g)
 	{
-		Color blue = new Color(39, 141, 247);
-		g.setColor(blue);
+		g.setColor(new Color(39, 141, 247));
+		g.setStroke(new BasicStroke(8));
+		g.draw(riverPath);
 
-		int rad = 10;
+
+		g.setColor(Color.BLACK);
+		g.setStroke(new BasicStroke(1));
+
+		int rad = 3;
 		for (int i = 0; i < river.size(); i++)
 		{
 			Point2D.Double p = river.get(i);
