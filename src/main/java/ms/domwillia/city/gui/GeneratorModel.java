@@ -1,9 +1,7 @@
 package ms.domwillia.city.gui;
 
 import ms.domwillia.city.Config;
-import ms.domwillia.city.generator.PopulationDensity;
 import ms.domwillia.city.generator.Generator;
-import ms.domwillia.city.graph.Graph;
 
 import javax.swing.*;
 import java.util.Observable;

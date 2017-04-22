@@ -2,7 +2,7 @@ package ms.domwillia.city.generator.rules;
 
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
-import ms.domwillia.city.generator.PopulationDensity;
+import ms.domwillia.city.generator.Density;
 import ms.domwillia.city.generator.ProposedVertex;
 import ms.domwillia.city.generator.Utils;
 import ms.domwillia.city.graph.Vertex;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GridRule
 {
-	public void suggestVertices(PopulationDensity density, ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
+	public void suggestVertices(Density density, ProposedVertex src, Vertex srcNewlyAdded, List<ProposedVertex> proposed)
 	{
 		double angleVariationMin = Config.getDouble(src.getType() == RoadType.MAIN ?
 			Config.Key.MAIN_ANGLE_VARIATION_MIN : Config.Key.MINOR_ANGLE_VARIATION_MIN);

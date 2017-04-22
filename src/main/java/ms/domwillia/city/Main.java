@@ -1,8 +1,6 @@
 package ms.domwillia.city;
 
 
-import ms.domwillia.city.graph.Graph;
-import ms.domwillia.city.generator.PopulationDensity;
 import ms.domwillia.city.generator.Generator;
 
 public class Main
