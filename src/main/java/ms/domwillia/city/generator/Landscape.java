@@ -3,6 +3,8 @@ package ms.domwillia.city.generator;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.generator.util.NoiseRandom;
 import ms.domwillia.city.generator.util.Utils;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -16,14 +18,17 @@ public class Landscape
 	private final int width;
 	private final int height;
 
-	private List<Point2D.Double> river = new ArrayList<>();
+	private List<Point2D.Double> riverPoints;
+	private List<Point2D.Double> riverPointsInterpolated;
+
 	private Path2D.Double riverPath;
 
 	public Landscape(int width, int height)
 	{
 		this.width = width;
 		this.height = height;
-
+		this.riverPoints = new ArrayList<>();
+		this.riverPointsInterpolated = new ArrayList<>();
 	}
 
 	/**
@@ -37,20 +42,51 @@ public class Landscape
 		double noise = Config.getDouble(Config.Key.NOISE_SCALE);
 
 		int maxAttempts = 500;
-		while (river.size() < minPoints && maxAttempts-- > 0)
+		while (riverPoints.size() < minPoints && maxAttempts-- > 0)
 		{
-			river.clear();
+			riverPoints.clear();
 			placeRivers(scanAngle, noise * scanRangeScale, sampleCount);
 		}
 
 		if (maxAttempts < 0)
 			System.err.println("Aborted river generation after too many tries");
 
-		riverPath = new Path2D.Double();
-		for (int i = 0, riverSize = river.size() - 1; i < riverSize; i++)
+		final int scale = 3;
+
+		double[] indices = new double[riverPoints.size()];
+		double[] xs = new double[riverPoints.size()];
+		double[] ys = new double[riverPoints.size()];
+		for (int i = 0, riverSize = riverPoints.size(); i < riverSize; i++)
 		{
-			Point2D.Double curr = river.get(i);
-			Point2D.Double next = river.get(i + 1);
+			Point2D.Double p = riverPoints.get(i);
+			xs[i] = p.x;
+			ys[i] = p.y;
+			indices[i] = i * scale;
+		}
+
+		SplineInterpolator interpolator = new SplineInterpolator();
+		PolynomialSplineFunction splineX = interpolator.interpolate(indices, xs);
+		PolynomialSplineFunction splineY = interpolator.interpolate(indices, ys);
+
+		for (int i = 0; i < xs.length - 1; i++)
+		{
+			double index = indices[i];
+
+			for (int j = 0; j < scale; j++)
+			{
+				Point2D.Double newPoint = new Point2D.Double(
+					splineX.value(index + j), splineY.value(index + j)
+				);
+				riverPointsInterpolated.add(newPoint);
+			}
+
+		}
+
+		riverPath = new Path2D.Double();
+		for (int i = 0, pointCount = riverPointsInterpolated.size() - 1; i < pointCount; i++)
+		{
+			Point2D.Double curr = riverPointsInterpolated.get(i);
+			Point2D.Double next = riverPointsInterpolated.get(i + 1);
 			riverPath.moveTo(curr.x, curr.y);
 			riverPath.lineTo(next.x, next.y);
 		}
@@ -73,7 +109,7 @@ public class Landscape
 			minDensity = Double.MAX_VALUE;
 
 			// add this point
-			river.add(new Point.Double(pos.x, pos.y));
+			riverPoints.add(new Point.Double(pos.x, pos.y));
 
 			// scan ahead in for best next point
 			for (int i = 0; i < sampleCount; i++)
@@ -105,7 +141,7 @@ public class Landscape
 				break;
 		}
 
-		river.add(new Point.Double(bestPoint.x, bestPoint.y));
+		riverPoints.add(new Point.Double(bestPoint.x, bestPoint.y));
 	}
 
 	private Vector2D generateRiverSeed(Point2D.Double pos)
@@ -149,22 +185,22 @@ public class Landscape
 
 	void render(Graphics2D g)
 	{
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 		g.setColor(new Color(39, 141, 247));
-		g.setStroke(new BasicStroke(8));
+		g.setStroke(new BasicStroke(30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.draw(riverPath);
 
-
-		g.setColor(Color.BLACK);
 		g.setStroke(new BasicStroke(1));
 
-		int rad = 3;
-		for (int i = 0; i < river.size(); i++)
-		{
-			Point2D.Double p = river.get(i);
-
+		int rad = 4;
+		g.setColor(Color.RED);
+		for (Point2D.Double p : riverPointsInterpolated)
 			g.fillOval((int) (p.x - rad / 2), (int) (p.y - rad / 2), rad, rad);
-//			g.drawRect((int) p.x, (int) p.y, 1, 1);
-		}
+
+		g.setColor(Color.BLACK);
+		for (Point2D.Double p : riverPoints)
+			g.fillOval((int) (p.x - rad / 2), (int) (p.y - rad / 2), rad, rad);
 
 	}
 }
