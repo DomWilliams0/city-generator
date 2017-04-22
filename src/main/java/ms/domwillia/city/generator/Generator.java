@@ -129,9 +129,9 @@ public class Generator
 		// create a river
 		landscape.generateRiver(
 			25,
-			Math.PI / 4,
+			Math.PI / 3,
 			0.5,
-			5
+			10
 		);
 
 

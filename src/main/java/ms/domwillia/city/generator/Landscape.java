@@ -3,8 +3,9 @@ package ms.domwillia.city.generator;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.generator.util.NoiseRandom;
 import ms.domwillia.city.generator.util.Utils;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
+import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;
@@ -64,9 +65,9 @@ public class Landscape
 			indices[i] = i * scale;
 		}
 
-		SplineInterpolator interpolator = new SplineInterpolator();
-		PolynomialSplineFunction splineX = interpolator.interpolate(indices, xs);
-		PolynomialSplineFunction splineY = interpolator.interpolate(indices, ys);
+		UnivariateInterpolator interpolator = new AkimaSplineInterpolator();
+		UnivariateFunction splineX = interpolator.interpolate(indices, xs);
+		UnivariateFunction splineY = interpolator.interpolate(indices, ys);
 
 		for (int i = 0; i < xs.length - 1; i++)
 		{
@@ -94,8 +95,8 @@ public class Landscape
 
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
 	{
-		Density density = new Density(20);
-		NoiseRandom rand = new NoiseRandom(10);
+		Density density = new Density(10);
+		NoiseRandom rand = new NoiseRandom(1);
 
 		// random seed point
 		Point2D.Double pos = new Point2D.Double();
