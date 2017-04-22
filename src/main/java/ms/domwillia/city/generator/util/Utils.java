@@ -1,4 +1,4 @@
-package ms.domwillia.city.generator;
+package ms.domwillia.city.generator.util;
 
 import java.util.Random;
 

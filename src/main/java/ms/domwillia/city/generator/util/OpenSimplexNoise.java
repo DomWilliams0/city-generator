@@ -1,4 +1,4 @@
-package ms.domwillia.city.generator;/*
+package ms.domwillia.city.generator.util;/*
  * OpenSimplex Noise in Java.
  * by Kurt Spencer
  * 

@@ -1,6 +1,7 @@
 package ms.domwillia.city.generator;
 
 import ms.domwillia.city.Config;
+import ms.domwillia.city.generator.util.Utils;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.awt.*;

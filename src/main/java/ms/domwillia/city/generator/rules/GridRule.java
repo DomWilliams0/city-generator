@@ -4,7 +4,7 @@ import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.Density;
 import ms.domwillia.city.generator.ProposedVertex;
-import ms.domwillia.city.generator.Utils;
+import ms.domwillia.city.generator.util.Utils;
 import ms.domwillia.city.graph.Vertex;
 
 import java.util.List;
