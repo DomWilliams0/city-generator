@@ -39,10 +39,8 @@ class RenderPanel extends JPanel implements Observer
 
 	private void resetImage()
 	{
-		Generator placeholder = new Generator(Config.getInt(Config.Key.WORLD_WIDTH), Config.getInt(Config.Key.WORLD_HEIGHT));
-		image.setIcon(new ImageIcon(placeholder.render()));
 		image.setText("Nothing to see here");
-		image.setHorizontalTextPosition(SwingConstants.CENTER);
+		image.setHorizontalAlignment(SwingConstants.CENTER);
 	}
 
 	@Override
