@@ -45,7 +45,7 @@ public class Landscape
 
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
 	{
-		Density density = new Density(width, height);
+		Density density = new Density(20); // river scale is smaller
 
 		// random seed point
 		// TODO generate on any side

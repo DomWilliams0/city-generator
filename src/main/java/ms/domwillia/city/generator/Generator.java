@@ -121,7 +121,7 @@ public class Generator
 		generated = true;
 
 		// reseed density function
-		density = new Density(graph.getWidth(), graph.getHeight());
+		density = new Density();
 
 		// create landscape
 		landscape = new Landscape(graph.getWidth(), graph.getHeight());
