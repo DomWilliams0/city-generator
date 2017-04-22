@@ -10,7 +10,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Landscape
 {
@@ -63,12 +62,8 @@ public class Landscape
 		NoiseRandom rand = new NoiseRandom(10);
 
 		// random seed point
-		// TODO generate on any side
-		Point2D.Double pos = new Point2D.Double(
-			Utils.RANDOM.nextDouble() * width,
-			0
-		);
-		Vector2D direction = new Vector2D(0, 1); // down
+		Point2D.Double pos = new Point2D.Double();
+		Vector2D direction = generateRiverSeed(pos);
 
 		Point2D.Double bestPoint = new Point2D.Double();
 		double minDensity;
@@ -111,6 +106,45 @@ public class Landscape
 		}
 
 		river.add(new Point.Double(bestPoint.x, bestPoint.y));
+	}
+
+	private Vector2D generateRiverSeed(Point2D.Double pos)
+	{
+		pos.setLocation(
+			Utils.RANDOM.nextDouble() * width,
+			Utils.RANDOM.nextDouble() * height
+		);
+
+		Vector2D direction = null;
+
+		switch (Utils.RANDOM.nextInt(4))
+		{
+			// top
+			case 0:
+				pos.y = 0;
+				direction = new Vector2D(0, 1);
+				break;
+
+			// left
+			case 1:
+				pos.x = 0;
+				direction = new Vector2D(1, 0);
+				break;
+
+			// bottom
+			case 2:
+				pos.y = height;
+				direction = new Vector2D(0, -1);
+				break;
+
+			// right
+			case 3:
+				pos.x = width;
+				direction = new Vector2D(-1, 0);
+				break;
+		}
+
+		return direction;
 	}
 
 	void render(Graphics2D g)
