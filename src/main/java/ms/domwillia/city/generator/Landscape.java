@@ -1,5 +1,7 @@
 package ms.domwillia.city.generator;
 
+import de.alsclo.voronoi.Voronoi;
+import de.alsclo.voronoi.graph.Graph;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.generator.util.NoiseRandom;
 import ms.domwillia.city.generator.util.Utils;
@@ -12,7 +14,9 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Landscape
 {
@@ -21,8 +25,9 @@ public class Landscape
 
 	private List<Point2D.Double> riverPoints;
 	private List<Point2D.Double> riverPointsInterpolated;
-
 	private Path2D.Double riverPath;
+
+	private List<Region> regions;
 
 	public Landscape(int width, int height)
 	{
@@ -184,17 +189,105 @@ public class Landscape
 		return direction;
 	}
 
+	public void createPolygons(int count, int relaxCount)
+	{
+		List<de.alsclo.voronoi.graph.Point> startingPoints = new ArrayList<>(count);
+		for (int i = 0; i < count; i++)
+			startingPoints.add(new de.alsclo.voronoi.graph.Point(
+				Utils.RANDOM.nextDouble() * width,
+				Utils.RANDOM.nextDouble() * height
+			));
+
+		Voronoi voronoi = new Voronoi(startingPoints);
+		for (int i = 0; i < relaxCount; i++)
+			voronoi = voronoi.relax();
+
+		Graph regionGraph = voronoi.getGraph();
+
+		Map<de.alsclo.voronoi.graph.Point, Region> regionMap = new HashMap<>();
+		regions = new ArrayList<>();
+
+		Density density = new Density();
+
+		regionGraph.getSitePoints().forEach(p ->
+		{
+			Region r = new Region();
+			r.centre = new Point2D.Double(p.x, p.y);
+			r.density = density.getValue(p.x, p.y);
+			regionMap.put(p, r);
+		});
+
+		// create polygons around
+		// more edges = more central!
+
+		Map<Region, List<Point2D.Double>> unsortedPoints = new HashMap<>();
+		regionGraph.edgeStream().forEach(e ->
+		{
+			if (e.getB() == null)
+				return;
+
+			Region regionA = regionMap.get(e.getSite1());
+			Region regionB = regionMap.get(e.getSite2());
+
+			int ax = (int) e.getA().getLocation().x;
+			int ay = (int) e.getA().getLocation().y;
+
+			int bx = (int) e.getB().getLocation().x;
+			int by = (int) e.getB().getLocation().y;
+
+			Region[] rs = new Region[]{regionA, regionB};
+			for (Region r : rs)
+			{
+				unsortedPoints.putIfAbsent(r, new ArrayList<>());
+				List<Point2D.Double> points = unsortedPoints.get(r);
+				points.add(new Point2D.Double(ax, ay));
+				points.add(new Point2D.Double(bx, by));
+			}
+		});
+
+		for (Region region : unsortedPoints.keySet())
+		{
+			List<Point2D.Double> points = unsortedPoints.get(region);
+			points.sort((a, b) ->
+			{
+				double aAngle = Math.atan2(a.y - region.centre.y, a.x - region.centre.x);
+				double bAngle = Math.atan2(b.y - region.centre.y, b.x - region.centre.x);
+				return Double.compare(aAngle, bAngle);
+			});
+			region.area = new Polygon();
+			for (Point2D.Double point : points)
+			{
+				region.area.addPoint((int) point.x, (int) point.y);
+			}
+		}
+
+		regions.addAll(regionMap.values());
+
+	}
+
 	void render(Graphics2D g)
 	{
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		int rad = 4;
 
+		// regions
+		regions.forEach(r ->
+		{
+			int pixel = (int) (r.density * 255);
+			g.setColor(new Color(pixel, pixel, pixel));
+			g.fill(r.area);
+			g.setColor(Color.ORANGE);
+			g.fillOval((int) (r.centre.x - rad / 2), (int) (r.centre.y - rad / 2), rad, rad);
+		});
+
+
+		// river
 		g.setColor(new Color(39, 141, 247));
 		g.setStroke(new BasicStroke(30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.draw(riverPath);
 
 		g.setStroke(new BasicStroke(1));
 
-		int rad = 4;
 		g.setColor(Color.RED);
 		for (Point2D.Double p : riverPointsInterpolated)
 			g.fillOval((int) (p.x - rad / 2), (int) (p.y - rad / 2), rad, rad);
@@ -203,5 +296,12 @@ public class Landscape
 		for (Point2D.Double p : riverPoints)
 			g.fillOval((int) (p.x - rad / 2), (int) (p.y - rad / 2), rad, rad);
 
+	}
+
+	private class Region
+	{
+		Point2D.Double centre;
+		Polygon area;
+		double density;
 	}
 }
