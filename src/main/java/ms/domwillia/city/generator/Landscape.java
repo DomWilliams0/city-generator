@@ -214,6 +214,7 @@ public class Landscape
 			Region r = new Region();
 			r.centre = new Point2D.Double(p.x, p.y);
 			r.density = density.getValue(p.x, p.y);
+			r.area = new Polygon();
 			regionMap.put(p, r);
 		});
 
@@ -254,7 +255,6 @@ public class Landscape
 				double bAngle = Math.atan2(b.y - region.centre.y, b.x - region.centre.x);
 				return Double.compare(aAngle, bAngle);
 			});
-			region.area = new Polygon();
 			for (Point2D.Double point : points)
 			{
 				region.area.addPoint((int) point.x, (int) point.y);
