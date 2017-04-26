@@ -121,7 +121,7 @@ public class Config
 		configMap = new EnumMap<>(Key.class);
 
 		// defaults
-		configMap.put(Key.WORLD_WIDTH, 600);
+		configMap.put(Key.WORLD_WIDTH, 960);
 		configMap.put(Key.WORLD_HEIGHT, 600);
 
 		configMap.put(Key.MAIN_MERGE_THRESHOLD, 18.0);
