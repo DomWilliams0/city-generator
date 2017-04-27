@@ -3,6 +3,7 @@ package ms.domwillia.city.generator;
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
 import ms.domwillia.city.generator.landscape.Landscape;
+import ms.domwillia.city.generator.landscape.River;
 import ms.domwillia.city.generator.rules.GridRule;
 import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.graph.Vertex;
@@ -128,14 +129,15 @@ public class Generator
 		landscape = new Landscape(graph.getWidth(), graph.getHeight());
 
 		// create a river
-		landscape.generateRiver(
+		River river = landscape.generateRiver(
 			25,
 			Math.PI / 3,
 			0.5,
 			10
 		);
 
-		landscape.createPolygons(
+		landscape.createRegions(
+			river.getCentralPoint(),
 			400,
 			2
 		);

@@ -201,4 +201,10 @@ public class River
 			g.fillOval((int) (p.x - rad / 2), (int) (p.y - rad / 2), rad, rad);
 
 	}
+
+	public Point2D.Double getCentralPoint()
+	{
+		int index = Utils.RANDOM.nextInt(riverPoints.size() / 2) + (riverPoints.size() / 4);
+		return riverPoints.get(index);
+	}
 }

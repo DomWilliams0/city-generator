@@ -1,6 +1,7 @@
 package ms.domwillia.city.generator.landscape;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class Landscape
 {
@@ -31,14 +32,15 @@ public class Landscape
 		return river;
 	}
 
-	public void generateRiver(double minPoints, double scanAngle, double scanRangeScale, int sampleCount)
+	public River generateRiver(double minPoints, double scanAngle, double scanRangeScale, int sampleCount)
 	{
 		river = new River(this, minPoints, scanAngle, scanRangeScale, sampleCount);
+		return river;
 	}
 
-	public void createPolygons(int count, int relaxCount)
+	public void createRegions(Point2D.Double centralPoint, int count, int relaxCount)
 	{
-		regionMap = new RegionMap(this, count, relaxCount);
+		regionMap = new RegionMap(this, centralPoint, count, relaxCount);
 	}
 
 	public void render(Graphics2D g)

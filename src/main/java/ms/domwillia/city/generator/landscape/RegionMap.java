@@ -4,86 +4,100 @@ import com.jwetherell.algorithms.data_structures.KdTree;
 import de.alsclo.voronoi.Voronoi;
 import de.alsclo.voronoi.graph.Graph;
 import de.alsclo.voronoi.graph.Point;
-import ms.domwillia.city.generator.Density;
 import ms.domwillia.city.generator.RegionType;
 import ms.domwillia.city.generator.util.Utils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class RegionMap
 {
 	private final Landscape landscape;
 	private List<Region> regions;
-	private KdTree<RegionPoint> tree;
 
-	public RegionMap(Landscape landscape, int pointCount, int relaxCount)
+	public RegionMap(Landscape landscape, Point2D.Double centralPoint, int pointCount, int relaxCount)
 	{
 		this.landscape = landscape;
 		this.regions = new ArrayList<>();
-		this.tree = new KdTree<>();
 
-		createRegions(pointCount, relaxCount);
-	}
-
-	private void createRegions(int count, int relaxCount)
-	{
-		Graph regionGraph = createVoronoi(count, relaxCount);
+		Graph regionGraph = createVoronoi(pointCount, relaxCount);
 		Map<Point, Region> regionMap = new HashMap<>();
 
-		final int commScale = 30;
-		final int densScale = 150;
-		Density commercialisationScale = new Density(commScale);
-		Density densityScale = new Density(densScale);
+		final double maxDistance =
+			(landscape.getWidth() * landscape.getWidth()) +
+				(landscape.getHeight() * landscape.getHeight());
 
 		regionGraph.getSitePoints().forEach(p ->
 		{
 			Region r = new Region();
 			r.centre = new Point2D.Double(p.x, p.y);
 			r.area = new Polygon();
+			r.type = RegionType.NONE;
+
+			double distance = r.centre.distanceSq(centralPoint);
+			if (distance > maxDistance)
+				return;
+
+			r.distanceFromCentre = Utils.scale(distance,
+				0, maxDistance,
+				0, 1);
+
 			regionMap.put(p, r);
-			tree.add(new RegionPoint(r));
-
-			double comm = commercialisationScale.getValue(p.x, p.y);
-			double dens = densityScale.getValue(p.x, p.y);
-
-			final double LOW = 0.5;
-			final double MED = 0.75;
-			if (comm < LOW)
-			{
-				if (dens < LOW)
-					r.type = RegionType.RURAL;
-				else if (dens < MED)
-					r.type = RegionType.HOUSING_LUXURY;
-				else
-					r.type = RegionType.HOUSING_DENSE;
-			} else if (comm < MED)
-			{
-				if (dens < LOW)
-					r.type = RegionType.COMMERCIAL_SMALL;
-				else if (dens < MED)
-					r.type = RegionType.COMMERCIAL_LARGE;
-				else
-					r.type = RegionType.SERVICES;
-			} else
-			{
-				if (dens < LOW)
-					r.type = RegionType.INDUSTRIAL;
-				else if (dens < MED)
-					r.type = RegionType.COMMERCIAL_LARGE;
-				else
-					r.type = RegionType.METROPOLITAN;
-			}
-
 		});
 
 		traceRegionShapes(regionGraph, regionMap);
-
 		regions.addAll(regionMap.values());
+
+		// sort by distance to centre
+		regions.sort(Comparator.comparingDouble(r -> r.distanceFromCentre));
+
+		// oof thats an awful lot of magic numbers
+		Distribution[] distributions = new Distribution[]{
+			new Distribution(RegionType.METROPOLITAN, 10, 20),
+			new Distribution(RegionType.COMMERCIAL_LARGE, 15, 25),
+			new Distribution(RegionType.INDUSTRIAL, 8, 15),
+			new Distribution(RegionType.RURAL, 2, 10),
+			new Distribution(RegionType.HOUSING_DENSE, 10, 18),
+			new Distribution(RegionType.COMMERCIAL_SMALL, 14, 23),
+			new Distribution(RegionType.HOUSING_DENSE, 18, 27),
+			new Distribution(RegionType.SERVICES, 10, 15),
+			new Distribution(RegionType.HOUSING_LUXURY, 20, 30),
+			new Distribution(RegionType.RURAL, 2, 8),
+			new Distribution(RegionType.HOUSING_DENSE, 10, 20),
+			new Distribution(RegionType.HOUSING_LUXURY, 20, 30),
+		};
+		int curr = -1;
+		int currLimit = 0;
+		for (Region region : regions)
+		{
+			if (currLimit-- <= 0)
+			{
+				if (++curr >= distributions.length)
+					break;
+
+				Distribution d = distributions[curr];
+				currLimit = Utils.RANDOM.nextInt(d.max - d.min + 1) + d.min;
+
+			}
+
+
+			region.type = distributions[curr].type;
+		}
+	}
+
+	private class Distribution
+	{
+		RegionType type;
+		int min, max;
+
+		public Distribution(RegionType type, int min, int max)
+		{
+			this.type = type;
+			this.min = min;
+			this.max = max;
+		}
 	}
 
 	private void traceRegionShapes(Graph regionGraph, Map<Point, Region> regionMap)
@@ -96,6 +110,8 @@ public class RegionMap
 
 			Region regionA = regionMap.get(e.getSite1());
 			Region regionB = regionMap.get(e.getSite2());
+			if (regionA == null || regionB == null)
+				return;
 
 			int ax = (int) e.getA().getLocation().x;
 			int ay = (int) e.getA().getLocation().y;
@@ -152,7 +168,7 @@ public class RegionMap
 		// regions
 		regions.forEach(r ->
 		{
-			Color color = null;
+			Color color;
 			switch (r.type)
 			{
 				case METROPOLITAN:
@@ -178,6 +194,9 @@ public class RegionMap
 					break;
 				case RURAL:
 					color = new Color(56, 255, 46);
+					break;
+				default:
+					color = Color.DARK_GRAY;
 					break;
 			}
 			g.setColor(color);

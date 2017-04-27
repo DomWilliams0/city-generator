@@ -10,4 +10,5 @@ class Region
 	Point2D.Double centre;
 	Polygon area;
 	RegionType type;
+	double distanceFromCentre;
 }

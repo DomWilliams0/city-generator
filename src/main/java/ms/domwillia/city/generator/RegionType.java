@@ -24,5 +24,7 @@ public enum RegionType
 	HOUSING_LUXURY,
 
 	// parks, large open spaces
-	RURAL
+	RURAL,
+
+	NONE
 }
