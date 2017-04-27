@@ -2,6 +2,7 @@ package ms.domwillia.city.generator;
 
 import ms.domwillia.city.Config;
 import ms.domwillia.city.RoadType;
+import ms.domwillia.city.generator.landscape.Landscape;
 import ms.domwillia.city.generator.rules.GridRule;
 import ms.domwillia.city.graph.Graph;
 import ms.domwillia.city.graph.Vertex;
