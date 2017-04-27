@@ -127,17 +127,17 @@ public class Generator
 		// create landscape
 		landscape = new Landscape(graph.getWidth(), graph.getHeight());
 
-		landscape.createPolygons(
-			400,
-			2
-		);
-
 		// create a river
 		landscape.generateRiver(
 			25,
 			Math.PI / 3,
 			0.5,
 			10
+		);
+
+		landscape.createPolygons(
+			400,
+			2
 		);
 
 
