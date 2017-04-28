@@ -16,12 +16,225 @@ public class RegionMap
 {
 	private final Landscape landscape;
 	private List<Region> regions;
+	private KdTree<RegionPoint> kdTree;
 
 	public RegionMap(Landscape landscape, Point2D.Double centralPoint, int pointCount, int relaxCount)
 	{
 		this.landscape = landscape;
 		this.regions = new ArrayList<>();
+		this.kdTree = new KdTree<>();
 
+		placeRegions(centralPoint, pointCount, relaxCount);
+		allocateRegionTypes();
+	}
+
+	private void setRegions(Point2D.Double from, int[] seeds, RegionType type)
+	{
+		OptionalInt max = Arrays.stream(seeds).max();
+		assert max.isPresent();
+		Collection<RegionPoint> points = kdTree.nearestNeighbourSearch(max.getAsInt() + 1, new RegionPoint(from.x, from.y));
+
+		ArrayList<RegionPoint> arr = new ArrayList<>(points);
+		for (int seed : seeds)
+		{
+			arr.get(seed).region.type = type;
+		}
+	}
+
+	private Region getRegion(Point2D.Double from, int n)
+	{
+		Collection<RegionPoint> points = kdTree.nearestNeighbourSearch(n, new RegionPoint(from.x, from.y));
+		RegionPoint last = null;
+		for (RegionPoint point : points)
+			last = point;
+
+		return last == null ? null : last.region;
+	}
+
+	private class Distribution
+	{
+		int count;
+		RegionType type;
+		double min, max;
+
+		Distribution(int count, RegionType type, double min, double max)
+		{
+			this.count = count;
+			this.type = type;
+			this.min = min;
+			this.max = max;
+		}
+	}
+
+	private class Growth
+	{
+		RegionType type;
+		double growthFactor;
+
+		Growth(RegionType type, double growthFactor)
+		{
+			this.type = type;
+			this.growthFactor = growthFactor;
+		}
+	}
+
+	private class Morph
+	{
+		RegionType from, to;
+		double factor;
+
+		public Morph(RegionType from, RegionType to, double factor)
+		{
+			this.from = from;
+			this.to = to;
+			this.factor = factor;
+		}
+	}
+
+	private void allocateRegionTypes()
+	{
+		Distribution[] dist = new Distribution[]{
+			new Distribution(1, RegionType.METROPOLITAN, 0, 0.05),
+			new Distribution(14, RegionType.RURAL, 0, 1),
+			new Distribution(6, RegionType.HOUSING_DENSE, 0.1, 0.2),
+			new Distribution(6, RegionType.HOUSING_DENSE, 0.6, 1),
+			new Distribution(6, RegionType.HOUSING_LUXURY, 0.25, 0.4),
+			new Distribution(6, RegionType.HOUSING_LUXURY, 0.6, 1),
+			new Distribution(7, RegionType.COMMERCIAL_SMALL, 0.2, 0.8),
+			new Distribution(8, RegionType.COMMERCIAL_LARGE, 0.02, 0.2),
+		};
+
+		Growth[] growth = new Growth[]{
+			new Growth(RegionType.METROPOLITAN, 0.15),
+			new Growth(RegionType.HOUSING_LUXURY, 0.9),
+			new Growth(RegionType.HOUSING_DENSE, 0.7),
+			new Growth(RegionType.COMMERCIAL_LARGE, 0.05),
+			new Growth(RegionType.RURAL, 0.1),
+			new Growth(RegionType.INDUSTRIAL, 0.1),
+		};
+
+		int maxTries = 500;
+		do
+		{
+			// allocate
+			allocateRegionTypes(dist, growth);
+
+			// check
+			double[] fractions = new double[RegionType.values().length];
+			final int size = regions.size();
+			for (RegionType type : RegionType.values())
+			{
+				long count = regions.stream().filter(r -> r.type == type).count();
+				fractions[type.ordinal()] = (double) count / size;
+			}
+
+			// some basic checks
+			if (fractions[RegionType.METROPOLITAN.ordinal()] < 0.015 ||
+				fractions[RegionType.METROPOLITAN.ordinal()] > 0.03 ||
+
+				fractions[RegionType.COMMERCIAL_LARGE.ordinal()] < 0.05 ||
+				fractions[RegionType.COMMERCIAL_LARGE.ordinal()] > 0.1
+				)
+			{
+				// restart
+				regions.forEach(r -> r.type = RegionType.NONE);
+				continue;
+			}
+
+			// done
+			break;
+
+		} while (maxTries-- > 0);
+	}
+
+	private void allocateRegionTypes(Distribution[] dist, Growth[] growth)
+	{
+		// randomly distribute
+		for (Distribution d : dist)
+		{
+			for (int i = 0; i < d.count; i++)
+			{
+				double rand = d.min + (d.max - d.min) * Utils.RANDOM.nextDouble();
+				int index = (int) (rand * regions.size());
+				if (index == regions.size())
+					index = regions.size() - 1;
+
+				regions.get(index).type = d.type;
+			}
+		}
+
+		// industrials next to the river
+		List<Point2D.Double> riverPoints = landscape.getRiver().getPoints();
+		getRegion(riverPoints.get(0), 1).type = RegionType.INDUSTRIAL;
+		getRegion(riverPoints.get(riverPoints.size() - 1), 1).type = RegionType.INDUSTRIAL;
+
+		// initial iterative growth
+		final int nearFactor = 5;
+		// allocate most regions
+		while (regions.stream().anyMatch(r -> r.type == RegionType.NONE))
+		{
+			final int[] changes = {0};
+			for (Growth g : growth)
+			{
+				regions.stream().filter(r -> r.type == g.type).forEach(r ->
+				{
+					Collection<RegionPoint> near =
+						kdTree.nearestNeighbourSearch(nearFactor, new RegionPoint(r));
+
+					for (RegionPoint regionPoint : near)
+					{
+						if (regionPoint.region.type == RegionType.NONE)
+						{
+							if (Utils.RANDOM.nextDouble() > g.growthFactor)
+								continue;
+
+							changes[0]++;
+							regionPoint.region.type = g.type;
+							break;
+						}
+					}
+
+				});
+			}
+
+			// threshold reached, no more can be allocated
+			if (changes[0] == 0)
+				break;
+		}
+
+		// replace all empties with their neighbours
+		for (int i = 0; i < regions.size() - 1; i++)
+		{
+			Region a = regions.get(i);
+			Region b = regions.get(i + 1);
+
+			if (a.type == RegionType.NONE)
+				a.type = b.type;
+			else if (b.type == RegionType.NONE)
+				b.type = a.type;
+		}
+
+		// add supplementary regions
+		Morph[] morphs = new Morph[]{
+//			new Morph(RegionType.HOUSING_DENSE, RegionType.COMMERCIAL_SMALL, 0.1),
+//			new Morph(RegionType.HOUSING_LUXURY, RegionType.COMMERCIAL_SMALL, 0.08),
+		};
+
+		for (Morph morph : morphs)
+		{
+			regions.stream().filter(r -> r.type == morph.from).forEach(from ->
+			{
+				if (Utils.RANDOM.nextDouble() < morph.factor)
+					from.type = morph.to;
+
+			});
+		}
+
+
+	}
+
+	private void placeRegions(Point2D.Double centralPoint, int pointCount, int relaxCount)
+	{
 		Graph regionGraph = createVoronoi(pointCount, relaxCount);
 		Map<Point, Region> regionMap = new HashMap<>();
 
@@ -45,6 +258,7 @@ public class RegionMap
 				0, 1);
 
 			regionMap.put(p, r);
+			kdTree.add(new RegionPoint(r));
 		});
 
 		traceRegionShapes(regionGraph, regionMap);
@@ -52,52 +266,6 @@ public class RegionMap
 
 		// sort by distance to centre
 		regions.sort(Comparator.comparingDouble(r -> r.distanceFromCentre));
-
-		// oof thats an awful lot of magic numbers
-		Distribution[] distributions = new Distribution[]{
-			new Distribution(RegionType.METROPOLITAN, 10, 20),
-			new Distribution(RegionType.COMMERCIAL_LARGE, 15, 25),
-			new Distribution(RegionType.INDUSTRIAL, 8, 15),
-			new Distribution(RegionType.RURAL, 2, 10),
-			new Distribution(RegionType.HOUSING_DENSE, 10, 18),
-			new Distribution(RegionType.COMMERCIAL_SMALL, 14, 23),
-			new Distribution(RegionType.HOUSING_DENSE, 18, 27),
-			new Distribution(RegionType.SERVICES, 10, 15),
-			new Distribution(RegionType.HOUSING_LUXURY, 20, 30),
-			new Distribution(RegionType.RURAL, 2, 8),
-			new Distribution(RegionType.HOUSING_DENSE, 10, 20),
-			new Distribution(RegionType.HOUSING_LUXURY, 20, 30),
-		};
-		int curr = -1;
-		int currLimit = 0;
-		for (Region region : regions)
-		{
-			if (currLimit-- <= 0)
-			{
-				if (++curr >= distributions.length)
-					break;
-
-				Distribution d = distributions[curr];
-				currLimit = Utils.RANDOM.nextInt(d.max - d.min + 1) + d.min;
-
-			}
-
-
-			region.type = distributions[curr].type;
-		}
-	}
-
-	private class Distribution
-	{
-		RegionType type;
-		int min, max;
-
-		public Distribution(RegionType type, int min, int max)
-		{
-			this.type = type;
-			this.min = min;
-			this.max = max;
-		}
 	}
 
 	private void traceRegionShapes(Graph regionGraph, Map<Point, Region> regionMap)

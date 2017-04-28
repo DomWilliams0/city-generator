@@ -207,4 +207,9 @@ public class River
 		int index = Utils.RANDOM.nextInt(riverPoints.size() / 2) + (riverPoints.size() / 4);
 		return riverPoints.get(index);
 	}
+
+	public List<Point2D.Double> getPoints()
+	{
+		return riverPoints;
+	}
 }
