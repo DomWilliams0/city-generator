@@ -1,6 +1,6 @@
-package ms.domwillia.city.generator;
+package ms.domwillia.city.generator.landscape;
 
-public enum RegionType
+public enum MinorRegionType
 {
 	// skyscrapers, offices
 	METROPOLITAN,

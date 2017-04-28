@@ -1,7 +1,5 @@
 package ms.domwillia.city.generator.landscape;
 
-import ms.domwillia.city.generator.RegionType;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 

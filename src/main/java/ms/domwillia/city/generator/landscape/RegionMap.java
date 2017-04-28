@@ -4,7 +4,6 @@ import com.jwetherell.algorithms.data_structures.KdTree;
 import de.alsclo.voronoi.Voronoi;
 import de.alsclo.voronoi.graph.Graph;
 import de.alsclo.voronoi.graph.Point;
-import ms.domwillia.city.generator.RegionType;
 import ms.domwillia.city.generator.util.Utils;
 
 import java.awt.*;
@@ -25,7 +24,7 @@ public class RegionMap
 		this.kdTree = new KdTree<>();
 
 		placeRegions(centralPoint, pointCount, relaxCount);
-		allocateRegionTypes();
+		allocateMacroRegionTypes();
 	}
 
 	private void setRegions(Point2D.Double from, int[] seeds, RegionType type)
@@ -91,26 +90,21 @@ public class RegionMap
 		}
 	}
 
-	private void allocateRegionTypes()
+	private void allocateMacroRegionTypes()
 	{
 		Distribution[] dist = new Distribution[]{
 			new Distribution(1, RegionType.METROPOLITAN, 0, 0.05),
-			new Distribution(14, RegionType.RURAL, 0, 1),
-			new Distribution(6, RegionType.HOUSING_DENSE, 0.1, 0.2),
-			new Distribution(6, RegionType.HOUSING_DENSE, 0.6, 1),
-			new Distribution(6, RegionType.HOUSING_LUXURY, 0.25, 0.4),
-			new Distribution(6, RegionType.HOUSING_LUXURY, 0.6, 1),
-			new Distribution(7, RegionType.COMMERCIAL_SMALL, 0.2, 0.8),
-			new Distribution(8, RegionType.COMMERCIAL_LARGE, 0.02, 0.2),
+			new Distribution(6, RegionType.COMMERCIAL, 0.02, 0.8),
+			new Distribution(10, RegionType.RESIDENTIAL, 0.3, 0.9),
+			new Distribution(30, RegionType.RURAL, 0.95, 1),
 		};
 
 		Growth[] growth = new Growth[]{
-			new Growth(RegionType.METROPOLITAN, 0.15),
-			new Growth(RegionType.HOUSING_LUXURY, 0.9),
-			new Growth(RegionType.HOUSING_DENSE, 0.7),
-			new Growth(RegionType.COMMERCIAL_LARGE, 0.05),
-			new Growth(RegionType.RURAL, 0.1),
-			new Growth(RegionType.INDUSTRIAL, 0.1),
+			new Growth(RegionType.METROPOLITAN, 0.4),
+			new Growth(RegionType.COMMERCIAL, 0.2),
+			new Growth(RegionType.RESIDENTIAL, 0.5),
+			new Growth(RegionType.RURAL, 0.2),
+			new Growth(RegionType.INDUSTRIAL, 0.3),
 		};
 
 		// randomly distribute
@@ -180,8 +174,8 @@ public class RegionMap
 
 		// add supplementary regions
 		Morph[] morphs = new Morph[]{
-			new Morph(RegionType.HOUSING_DENSE, RegionType.COMMERCIAL_SMALL, 0.1),
-			new Morph(RegionType.HOUSING_LUXURY, RegionType.COMMERCIAL_SMALL, 0.08),
+//			new Morph(RegionType.HOUSING_DENSE, RegionType.COMMERCIAL_SMALL, 0.1),
+//			new Morph(RegionType.HOUSING_LUXURY, RegionType.COMMERCIAL_SMALL, 0.08),
 		};
 
 		for (Morph morph : morphs)
@@ -306,22 +300,13 @@ public class RegionMap
 				case METROPOLITAN:
 					color = new Color(229, 112, 25);
 					break;
-				case COMMERCIAL_LARGE:
+				case COMMERCIAL:
 					color = new Color(255, 92, 80);
 					break;
 				case INDUSTRIAL:
 					color = new Color(255, 33, 81);
 					break;
-				case SERVICES:
-					color = new Color(139, 250, 255);
-					break;
-				case COMMERCIAL_SMALL:
-					color = new Color(255, 160, 147);
-					break;
-				case HOUSING_DENSE:
-					color = new Color(134, 132, 255);
-					break;
-				case HOUSING_LUXURY:
+				case RESIDENTIAL:
 					color = new Color(162, 176, 255);
 					break;
 				case RURAL:
