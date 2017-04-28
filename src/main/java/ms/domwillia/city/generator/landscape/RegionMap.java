@@ -113,42 +113,6 @@ public class RegionMap
 			new Growth(RegionType.INDUSTRIAL, 0.1),
 		};
 
-		int maxTries = 500;
-		do
-		{
-			// allocate
-			allocateRegionTypes(dist, growth);
-
-			// check
-			double[] fractions = new double[RegionType.values().length];
-			final int size = regions.size();
-			for (RegionType type : RegionType.values())
-			{
-				long count = regions.stream().filter(r -> r.type == type).count();
-				fractions[type.ordinal()] = (double) count / size;
-			}
-
-			// some basic checks
-			if (fractions[RegionType.METROPOLITAN.ordinal()] < 0.015 ||
-				fractions[RegionType.METROPOLITAN.ordinal()] > 0.03 ||
-
-				fractions[RegionType.COMMERCIAL_LARGE.ordinal()] < 0.05 ||
-				fractions[RegionType.COMMERCIAL_LARGE.ordinal()] > 0.1
-				)
-			{
-				// restart
-				regions.forEach(r -> r.type = RegionType.NONE);
-				continue;
-			}
-
-			// done
-			break;
-
-		} while (maxTries-- > 0);
-	}
-
-	private void allocateRegionTypes(Distribution[] dist, Growth[] growth)
-	{
 		// randomly distribute
 		for (Distribution d : dist)
 		{
@@ -216,8 +180,8 @@ public class RegionMap
 
 		// add supplementary regions
 		Morph[] morphs = new Morph[]{
-//			new Morph(RegionType.HOUSING_DENSE, RegionType.COMMERCIAL_SMALL, 0.1),
-//			new Morph(RegionType.HOUSING_LUXURY, RegionType.COMMERCIAL_SMALL, 0.08),
+			new Morph(RegionType.HOUSING_DENSE, RegionType.COMMERCIAL_SMALL, 0.1),
+			new Morph(RegionType.HOUSING_LUXURY, RegionType.COMMERCIAL_SMALL, 0.08),
 		};
 
 		for (Morph morph : morphs)
