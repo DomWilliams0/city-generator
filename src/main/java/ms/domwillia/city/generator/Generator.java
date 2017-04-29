@@ -130,15 +130,15 @@ public class Generator
 
 		// create a river
 		River river = landscape.generateRiver(
-			25,
+			40,
 			Math.PI / 3,
 			0.5,
-			10
+			1
 		);
 
 		landscape.createRegions(
 			river.getCentralPoint(),
-			400,
+			250,
 			2
 		);
 

@@ -94,17 +94,15 @@ public class RegionMap
 	{
 		Distribution[] dist = new Distribution[]{
 			new Distribution(1, RegionType.METROPOLITAN, 0, 0.05),
-			new Distribution(6, RegionType.COMMERCIAL, 0.02, 0.8),
-			new Distribution(10, RegionType.RESIDENTIAL, 0.3, 0.9),
-			new Distribution(30, RegionType.RURAL, 0.95, 1),
+			new Distribution(12, RegionType.RESIDENTIAL, 0.3, 0.9),
+			new Distribution(8, RegionType.RURAL, 0.6, 1),
 		};
 
 		Growth[] growth = new Growth[]{
-			new Growth(RegionType.METROPOLITAN, 0.4),
-			new Growth(RegionType.COMMERCIAL, 0.2),
-			new Growth(RegionType.RESIDENTIAL, 0.5),
-			new Growth(RegionType.RURAL, 0.2),
-			new Growth(RegionType.INDUSTRIAL, 0.3),
+			new Growth(RegionType.METROPOLITAN, 0.2),
+			new Growth(RegionType.RESIDENTIAL, 0.15),
+			new Growth(RegionType.RURAL, 0.12),
+			new Growth(RegionType.INDUSTRIAL, 0.08),
 		};
 
 		// randomly distribute
@@ -127,7 +125,7 @@ public class RegionMap
 		getRegion(riverPoints.get(riverPoints.size() - 1), 1).type = RegionType.INDUSTRIAL;
 
 		// initial iterative growth
-		final int nearFactor = 5;
+		final int nearFactor = 8;
 		// allocate most regions
 		while (regions.stream().anyMatch(r -> r.type == RegionType.NONE))
 		{
@@ -299,9 +297,6 @@ public class RegionMap
 			{
 				case METROPOLITAN:
 					color = new Color(229, 112, 25);
-					break;
-				case COMMERCIAL:
-					color = new Color(255, 92, 80);
 					break;
 				case INDUSTRIAL:
 					color = new Color(255, 33, 81);

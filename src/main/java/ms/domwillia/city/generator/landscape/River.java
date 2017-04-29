@@ -186,7 +186,7 @@ public class River
 	{
 		int rad = 4;
 
-		g.setColor(new Color(39, 141, 247));
+		g.setColor(new Color(36, 103, 247));
 		g.setStroke(new BasicStroke(30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		g.draw(riverPath);
 
