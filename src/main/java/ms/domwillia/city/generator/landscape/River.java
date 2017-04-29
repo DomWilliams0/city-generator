@@ -41,11 +41,22 @@ public class River
 		double noise = Config.getDouble(Config.Key.NOISE_SCALE);
 
 		int maxAttempts = 500;
-		while (riverPoints.size() < minPoints && maxAttempts-- > 0)
+		do
 		{
-			riverPoints.clear();
 			placeRivers(scanAngle, noise * scanRangeScale, sampleCount);
-		}
+
+			// success
+			if (riverPoints.size() >= minPoints &&
+				isValid())
+				break;
+
+			// too many failures
+			if (maxAttempts-- < 0)
+				break;
+
+			// restart
+			riverPoints.clear();
+		} while (true);
 
 		if (maxAttempts < 0)
 			System.err.println("Aborted river generation after too many tries, settling with " + riverPoints.size());
@@ -89,6 +100,17 @@ public class River
 			riverPath.moveTo(curr.x, curr.y);
 			riverPath.lineTo(next.x, next.y);
 		}
+	}
+
+	private boolean isValid()
+	{
+		Point2D.Double first = riverPoints.get(0);
+		Point2D.Double last = riverPoints.get(riverPoints.size() - 1);
+
+		double dst = first.distanceSq(last);
+
+		double minDim = Math.min(landscape.getWidth(), landscape.getHeight());
+		return dst >= (minDim * minDim);
 	}
 
 	private void placeRivers(double scanAngle, double scanRange, int sampleCount)
